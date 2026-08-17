@@ -21,4 +21,4 @@ Interactive world models are judged on whether the next frames obey the event / 
 - Low SSIM + high action acc → identity drift with a correct motion sketch; memory or texture, not the controller.
 - Flicker at chunk edges after an action → boundary memory, not “the policy is wrong.”
 
-Vision Toolkit `vision_glance` on the action window is allowed only after `wm_rollout_diff` named the frames.
+`wm_inspect` the action window after `wm_rollout_diff` has named the frames.

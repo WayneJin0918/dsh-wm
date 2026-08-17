@@ -41,6 +41,7 @@ dsh --profile wm
 - **一行命令安装。** 官方 bundle 格式，纯 JavaScript，没有 `prepare` / `allowBuilds`。
 - **一次 run 是一个目录，不是感觉。** 可选 `wm.yaml` 声明 pred / gt / log / metrics；没有清单就启发式；认不出就返回候选和警告，不编路径。
 - **有 run 就测量。** `wm_discover` → `wm_summarize` → `wm_rollout_diff` 给出 layout、log 和 pred/GT 数字。
+- **看图就在本仓库里。** `wm_inspect` 抽 first / mid / last（或指定下标），写出接触图，并返回亮度草图和颜色 / 对比度描述。
 - **内置 WM 知识。** chunk-AR、memory 类型、KV memory、exposure bias、revisit 与代理、消融、action following、cache eviction、Harness 上的 RSI。先 `wm_knowledge` / `wm_diagnose`，再谈新结构。
 - **RSI 作用在 harness 层。** skill `wm-rsi` 用 DSH trajectory、fork、Creator 和 `fixtures/sunset` 去演化 skill、`wm.yaml` 和评测配方——不是默默改 backbone。
 - **Skill 管住 agent。** 分诊、知识、RSI、公平消融、revisit。
@@ -54,6 +55,7 @@ dsh --profile wm
 | **agent 看不清这次 run 里有什么** | `wm_discover` 返回 layout、路径、帧数和警告 |
 | **看一眼 log 尾不能当结论** | `wm_summarize` 报告 last step / loss / NaN / 早停，外加 3 条可检验假设 |
 | **「看起来更差」不是指标** | `wm_rollout_diff` 返回 mean/min SSIM、曲线、最差帧和一句话诊断 |
+| **agent 需要看那些帧** | `wm_inspect` 返回接触图、亮度草图和每块的 look |
 | **消融把场景和 seed 混在一起** | `wm-ablation` 要求成对 `(scene, protocol, seed)`，先报 n 和 failure 率再报均值 |
 | **首尾帧 SSIM 被说成 loop closure** | `wm-revisit` 把它标成帧相似度代理，不是几何 revisit |
 | **agent 对着一帧描述发明 KV 方案** | `wm_knowledge` / `wm_diagnose` 打开 `kv-memory` 和 `chunk-ar`；没有卡片就没有结构 |
@@ -101,6 +103,7 @@ node cli.js diagnose "回程忘了房间"
 node cli.js discover fixtures/sunset
 node cli.js summarize fixtures/sunset
 node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
+node cli.js inspect fixtures/sunset --indices first,mid,last
 ```
 
 ### 3. 问研究问题，而不只是「对比这两个文件夹」
@@ -118,13 +121,14 @@ node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
 
 | 任务 | 推荐工作流 |
 | --- | --- |
-| 训练或评测 run 看起来不对 | `wm-run-triage` → discover → summarize → diff |
+| 训练或评测 run 看起来不对 | `wm-run-triage` → discover → summarize → diff → inspect |
 | 「该用哪种 memory？」 | `wm-knowledge` → `chunk-ar` / `memory-types` / `kv-memory` → 再测量 |
 | 后半段融化，train loss 还很健康 | `wm_diagnose` → `exposure-bias` → scheduled sampling，不是新 U-Net |
 | 哪个 cache / memory 配置赢了 | `wm-ablation` → 成对 n 和 failure 率 → 均值差 |
 | 相机有没有回来 | `wm-revisit` → 整段 diff → 没有 pose 才用首尾帧 |
 | 改进研究闭环本身 | `wm-rsi` → Creator / trajectory → 改一处 skill 或 `wm.yaml` → sunset 门禁 |
-| 离线 CI / 没有 API key | `node cli.js knowledge` / `diagnose` / `discover` / `diff` |
+| 看 first / mid / last 或最差窗口 | 对 run 或帧路径跑 `wm_inspect` |
+| 离线 CI / 没有 API key | `node cli.js knowledge` / `diagnose` / `discover` / `diff` / `inspect` |
 
 ## 工具一览
 
@@ -132,7 +136,7 @@ node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
 
 | 类别 | 工具 | 职责 |
 | --- | --- | --- |
-| **测量** | `wm_discover`、`wm_summarize`、`wm_rollout_diff` | 目录、log、pred vs GT 数字 |
+| **测量** | `wm_discover`、`wm_summarize`、`wm_rollout_diff`、`wm_inspect` | 目录、log、pred vs GT 数字、看帧 |
 | **知识** | `wm_knowledge`、`wm_diagnose` | 技术卡片，症状 → 下一步 |
 | **迭代** | skill `wm-rsi`、`wm-knowledge`、`wm-ablation`、`wm-revisit` | harness 层 RSI 和诚实评测 |
 
@@ -141,10 +145,11 @@ node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
 | `wm_discover` | 「这个 run 目录里有什么？」 | layout、pred/gt/log/metrics、帧数、警告 |
 | `wm_summarize` | 「训练真的跑完了吗，下一步测什么？」 | last loss / NaN / 早停、指标键、3 条假设 |
 | `wm_rollout_diff` | 「pred 相对 GT 漂在哪？」 | mean/min SSIM、曲线、最差 3 帧、诊断 |
+| `wm_inspect` | 「first / mid / last / 最差帧长什么样？」 | 接触图、亮度草图、颜色 / 对比度 look |
 | `wm_knowledge` | 「chunk-AR / KV memory / Harness 上的 RSI 是什么？」 | 目录或一整张技术卡片 |
 | `wm_diagnose` | 「一回来就忘了——然后呢？」 | 卡片 id + 下一步工具 / skill |
 
-本版本的 rollout 分数是 **亮度 SSIM + MSE**。还没有 LPIPS / RAFT；以后可以用 `--backend lpips` 去包本地 Python 环境。
+rollout 分数是 **亮度 SSIM + MSE**。看条带用内置的 `wm_inspect`。
 
 ### 知识卡片
 
@@ -195,7 +200,7 @@ metrics: metrics.json       # 任意 JSON；只做 key 摘要，不校验 schema
 ```mermaid
 flowchart LR
   ask[研究问题] --> know[wm_knowledge / wm_diagnose]
-  know --> measure[wm_discover / summarize / diff]
+  know --> measure[wm_discover / summarize / diff / inspect]
   measure --> rsi[wm-rsi 改 skill 和 wm.yaml]
   rsi --> gate[sunset fixture 加成对场景]
 ```
@@ -203,7 +208,7 @@ flowchart LR
 项目分三层：
 
 1. **知识** — 设计前必须打开的技术卡片。
-2. **测量** — 读文件系统的工具（不占 GPU，不提交训练）。
+2. **测量** — 读文件系统的工具，加上 `wm_inspect`（不占 GPU，不提交训练）。
 3. **RSI** — 只允许改研究闭环（不是 U-Net），并且要通过 fixture 门禁。
 
 ## 离线 fixture
@@ -239,10 +244,6 @@ dsh plugin --profile wm remove dsh-wm
 ```
 
 启用或升级后请重启 profile。
-
-### 0.2.0 明确不做
-
-仍然不做：fork Harness、自定义视频时间轴 UI、W&B / slurm 提交、DreamX / Omni-world / OpenWAM 适配器、LPIPS / 光流，以及**改权重**的 evolver。过程 RSI（`wm-rsi` 改 skill、`wm.yaml`、评测备注）**已经在本版本里**。
 
 ## 常见问题
 

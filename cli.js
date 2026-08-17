@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { resolve } from 'node:path'
-import { renderDiagnose, renderDiff, renderDiscover, renderKnowledge, renderSummarize } from './lib/card.js'
+import { renderDiagnose, renderDiff, renderDiscover, renderInspect, renderKnowledge, renderSummarize } from './lib/card.js'
 import { discover } from './lib/discover.js'
 import { rolloutDiff } from './lib/diff.js'
+import { inspectFrames } from './lib/inspect.js'
 import { diagnoseProblem, lookupKnowledge } from './lib/knowledge.js'
 import { summarize } from './lib/summarize.js'
 
@@ -22,6 +23,7 @@ Usage:
   node cli.js knowledge [query]
   node cli.js knowledge --id chunk-ar
   node cli.js diagnose <symptom...>
+  node cli.js inspect <path> [--indices first,mid,last] [--pair <gt>]
 `
 }
 
@@ -66,6 +68,15 @@ if (cmd === 'discover') {
     process.exit(1)
   }
   process.stdout.write(`${renderDiagnose(diagnoseProblem(symptom))}\n`)
+} else if (cmd === 'inspect') {
+  const path = rest.find((a) => !a.startsWith('--'))
+  if (!path) {
+    process.stderr.write(usage())
+    process.exit(1)
+  }
+  const indices = flag(rest, '--indices')
+  const pair = flag(rest, '--pair')
+  process.stdout.write(`${renderInspect(inspectFrames(resolve(path), { indices, pair }))}\n`)
 } else {
   process.stderr.write(usage())
   process.exit(1)

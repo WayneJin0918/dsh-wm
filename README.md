@@ -41,6 +41,7 @@ dsh --profile wm
 - **One command to install.** Official bundle format, pure JavaScript, no `prepare` / `allowBuilds`.
 - **A run is a directory, not a vibe.** Optional `wm.yaml` declares pred / gt / log / metrics. No manifest → heuristics. Cannot tell → candidates and warnings, never invented paths.
 - **Measure a run when you have one.** `wm_discover` → `wm_summarize` → `wm_rollout_diff` for layout, logs, and pred/GT numbers.
+- **Look at the frames in-repo.** `wm_inspect` samples first / mid / last (or named indices), writes a contact sheet, and returns a luma sketch plus a color/contrast look.
 - **Built-in WM knowledge.** Cards for chunk-AR, memory types, KV memory, exposure bias, revisit vs proxy, ablation, action following, cache eviction, and RSI-in-Harness. `wm_knowledge` / `wm_diagnose` before a new architecture.
 - **RSI on the harness layer.** Skill `wm-rsi` uses DSH trajectory, fork, Creator, and `fixtures/sunset` to evolve skills, `wm.yaml`, and eval recipes — not to silently rewrite the backbone.
 - **Skills that keep the agent honest.** Triage, knowledge, RSI, fair ablation, revisit.
@@ -54,6 +55,7 @@ dsh --profile wm
 | **The agent cannot see what a run contains** | `wm_discover` returns layout, paths, frame counts, and warnings |
 | **A log tail is not a conclusion** | `wm_summarize` reports last step / loss / NaN / early-stop plus three testable hypotheses |
 | **“Looks worse” is not a metric** | `wm_rollout_diff` returns mean/min SSIM, a curve, worst frames, and a one-line diagnosis |
+| **The agent needs to look at those frames** | `wm_inspect` returns a contact sheet, luma sketches, and a per-tile look |
 | **Ablations mix scenes and seeds** | `wm-ablation` requires paired `(scene, protocol, seed)` and failure rate before any mean |
 | **First-vs-last SSIM is sold as loop closure** | `wm-revisit` labels that number a frame-similarity proxy, not geometric revisit |
 | **The agent invents a KV design from a caption** | `wm_knowledge` / `wm_diagnose` open `kv-memory` and `chunk-ar`; no card, no architecture |
@@ -101,6 +103,7 @@ node cli.js diagnose "return trip forgot the room"
 node cli.js discover fixtures/sunset
 node cli.js summarize fixtures/sunset
 node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
+node cli.js inspect fixtures/sunset --indices first,mid,last
 ```
 
 ### 3. Ask a research question, not only “diff these folders”
@@ -118,13 +121,14 @@ These two runs claim a memory win — are they paired on scene/protocol/seed?
 
 | Task | Recommended workflow |
 | --- | --- |
-| A training or eval run looks wrong | `wm-run-triage` → discover → summarize → diff |
+| A training or eval run looks wrong | `wm-run-triage` → discover → summarize → diff → inspect |
 | “What kind of memory should we use?” | `wm-knowledge` → `chunk-ar` / `memory-types` / `kv-memory` → then measure |
 | Late-horizon melt, train loss fine | `wm_diagnose` → `exposure-bias` → scheduled sampling, not a new U-Net |
 | Which cache / memory config won? | `wm-ablation` → paired n and failure rate → mean delta |
 | Did the camera come back? | `wm-revisit` → full-strip diff → first/last only if no poses |
 | Improve the *research loop* itself | `wm-rsi` → Creator / trajectory → one skill or `wm.yaml` change → sunset gate |
-| Offline CI / no API key | `node cli.js knowledge`, `diagnose`, `discover`, `diff` |
+| Look at first / mid / last or the worst windows | `wm_inspect` on the run or the frame paths |
+| Offline CI / no API key | `node cli.js knowledge`, `diagnose`, `discover`, `diff`, `inspect` |
 
 ## Toolbox
 
@@ -132,7 +136,7 @@ Three families:
 
 | Family | Tools | Job |
 | --- | --- | --- |
-| **Measure** | `wm_discover`, `wm_summarize`, `wm_rollout_diff` | Layout, logs, pred vs GT numbers |
+| **Measure** | `wm_discover`, `wm_summarize`, `wm_rollout_diff`, `wm_inspect` | Layout, logs, pred vs GT numbers, look at frames |
 | **Know** | `wm_knowledge`, `wm_diagnose` | Technique cards and symptom → next step |
 | **Iterate** | skills `wm-rsi`, `wm-knowledge`, `wm-ablation`, `wm-revisit` | Harness-layer RSI and honest eval |
 
@@ -141,10 +145,11 @@ Three families:
 | `wm_discover` | “What is in this run directory?” | layout, pred/gt/log/metrics, frame counts, warnings |
 | `wm_summarize` | “Did training actually finish, and what should I test?” | last loss / NaN / early-stop, metric keys, 3 hypotheses |
 | `wm_rollout_diff` | “Where does pred drift from GT?” | mean/min SSIM, curve, worst 3 frames, diagnosis |
+| `wm_inspect` | “What do first / mid / last / the worst frames look like?” | contact sheet, luma sketch, color/contrast look |
 | `wm_knowledge` | “What is chunk-AR / KV memory / RSI in Harness?” | catalog or a full technique card |
 | `wm_diagnose` | “It forgets when we come back — now what?” | card ids + next tool / skill |
 
-Rollout scores in this release are **luminance SSIM + MSE**. There is no LPIPS / RAFT yet; a later `--backend lpips` can wrap a local Python env.
+Rollout scores are **luminance SSIM + MSE**. `wm_inspect` is the built-in way to look at the strip.
 
 ### Knowledge cards
 
@@ -195,7 +200,7 @@ Without the file, the plugin looks for `pred|preds|recon`, `gt|target|ref`, `tra
 ```mermaid
 flowchart LR
   ask[Research question] --> know[wm_knowledge / wm_diagnose]
-  know --> measure[wm_discover / summarize / diff]
+  know --> measure[wm_discover / summarize / diff / inspect]
   measure --> rsi[wm-rsi on skills and wm.yaml]
   rsi --> gate[sunset fixture plus paired scene]
 ```
@@ -203,7 +208,7 @@ flowchart LR
 This project has three layers:
 
 1. **Knowledge** — technique cards the agent must open before designing.
-2. **Measure** — filesystem tools (no GPU, no training submit).
+2. **Measure** — filesystem tools plus `wm_inspect` (no GPU, no training submit).
 3. **RSI** — skills that may change the research loop (not the U-Net) and must pass a fixture gate.
 
 ## Offline fixture
@@ -239,10 +244,6 @@ To disable the bundle temporarily, set this in the profile patch:
 ```
 
 Restart the profile after enabling or upgrading.
-
-### Not in 0.2.0
-
-Still out of scope: forking Harness, a custom video timeline UI, W&B / slurm submit, DreamX / Omni-world / OpenWAM adapters, LPIPS / optical flow, and a **weight-level** evolver. Process RSI (`wm-rsi` on skills, `wm.yaml`, and eval notes) **is** in this release.
 
 ## Troubleshooting
 

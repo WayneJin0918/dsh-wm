@@ -4,11 +4,11 @@
 
 Broader research toolkit, not only run scoring.
 
-- Tools: `wm_knowledge`, `wm_diagnose`.
+- Tools: `wm_knowledge`, `wm_diagnose`, `wm_inspect`.
 - Skills: `wm-knowledge`, `wm-rsi`.
 - Built-in cards: chunk-AR, memory types, KV memory, exposure bias, revisit, ablation, action following, cache eviction, RSI-in-Harness, diagnosis map.
-- README / 中文页按 Vision Toolkit 的广度重写：知识、RSI、测量三条工作流并列。
-- Publish copy aligned: GitHub description, toolbox families (measure / know / iterate), “Not in 0.2.0” no longer lists process RSI as missing.
+- Built-in look-at-frames: `wm_inspect` writes a contact sheet, a luma sketch, and a color/contrast look. Seeing a strip does not require another plugin.
+- README / 中文页按三条工作流并列：知识、RSI、测量（含看图）。
 - README lead is affirmative (what the toolkit is). Vision Toolkit stays in Acknowledgements only.
 
 ## 0.1.0 — 2026-08-17
@@ -22,4 +22,4 @@ Initial private release.
 - Pure-JS PNG codec and luminance SSIM / MSE. Optional `ffmpeg` for JPEG and video.
 - Offline `fixtures/sunset` demo and `node cli.js` for runs without Harness.
 - Bilingual README following the DSH plugin publishing layout used by [dsh-vision-toolkit](https://github.com/Anionex/dsh-vision-toolkit).
-- Acknowledgements for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) and [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit); compose `vision_glance` / `vision_pixel_diff` / `vision_crop` instead of shipping a second vision stack. Homepage reference: [agent-vision.anionex.me](https://agent-vision.anionex.me).
+- Acknowledgements for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) and [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit). Homepage reference: [agent-vision.anionex.me](https://agent-vision.anionex.me).

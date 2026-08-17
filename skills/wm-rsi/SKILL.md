@@ -13,7 +13,7 @@ Harness already records everything the model saw (system prompt, tools, injectio
 - Skills and routing (`whenToUse`, triage order).
 - `wm.yaml` and the definition of failure / revisit pairs.
 - Which knowledge card is required before a claim.
-- Which Vision Toolkit tool runs on which worst frame.
+- Which `wm_inspect` indices (first / mid / last / worst) the next session must open.
 
 ## What RSI is not
 
@@ -25,7 +25,7 @@ Harness already records everything the model saw (system prompt, tools, injectio
 
 1. **Falsifiable claim.** One sentence. Example: “sparse memory beats FIFO on this scene, same seed, on revisit proxy.”
 2. **`wm_knowledge`** `rsi-harness` plus the technique card (`memory-types`, `cache-eviction`, `exposure-bias`, …).
-3. **Measure the current world.** `wm_discover` → `wm_summarize` and/or `wm_rollout_diff`. Optional Vision Toolkit on worst frames.
+3. **Measure the current world.** `wm_discover` → `wm_summarize` and/or `wm_rollout_diff`. `wm_inspect` the worst frames.
 4. **Inspect the harness.** In Creator / trajectory view: what skill ran, what tool args, what was injected. Do not guess.
 5. **One delta.** A skill paragraph, a `wm.yaml` field, or a note the next session must load. Say the rollback.
 6. **Gate.**

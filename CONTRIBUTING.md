@@ -9,12 +9,12 @@ npm test
 npm run check
 ```
 
-`check` must cover **know + measure**: `knowledge`, `diagnose`, and the sunset discover/summarize/diff path.
+`check` must cover **know + measure + look**: `knowledge`, `diagnose`, sunset discover/summarize/diff, and `inspect`.
 
 ## Scope (0.2.0)
 
-In scope: filesystem measure tools, `wm.yaml`, built-in knowledge cards, diagnosis, and harness-layer RSI skills.
-
-Out of scope unless an issue asks: a Harness fork, a video timeline UI, a GPU metric backend (LPIPS / RAFT), weight-level evolver, W&B / slurm submit.
+Filesystem measure tools, built-in frame inspect (`wm_inspect` contact sheet + luma sketch), `wm.yaml`, knowledge cards, diagnosis, and harness-layer RSI skills.
 
 Match the publishing layout of [dsh-vision-toolkit](https://github.com/Anionex/dsh-vision-toolkit): bilingual README, toolbox families (measure / know / iterate), a three-step quick start, and a changelog entry. If you add a tool or card, update the GitHub repo description only when the one-line product pitch changes.
+
+Keep README copy affirmative. Do not add a “Not in this version” / “明确不做” list. Seeing frames is `wm_inspect` in this repo.

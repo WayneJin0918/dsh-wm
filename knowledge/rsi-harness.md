@@ -16,7 +16,7 @@ DSH-WM uses that surface on **world-model research problems**. The optimization 
 - Skills and their `whenToUse` (triage order, ablation rules).
 - Eval recipes (`wm.yaml`, which frames count as revisit, failure definition).
 - Hypotheses the summarizer is allowed to emit.
-- Which Vision Toolkit tool is called on which worst frame.
+- Which `wm_inspect` indices the next session must open.
 
 ## What you may not silently evolve
 
@@ -28,7 +28,7 @@ DSH-WM uses that surface on **world-model research problems**. The optimization 
 
 1. **Name a falsifiable claim.** Example: “sparse memory beats FIFO on Sunset revisit, same seed.”
 2. **`wm_knowledge`** the technique (`memory-types`, `cache-eviction`, `revisit-eval`, …).
-3. **Measure.** `wm_discover` → `wm_summarize` / `wm_rollout_diff` (and Vision Toolkit on worst frames if installed).
+3. **Measure.** `wm_discover` → `wm_summarize` / `wm_rollout_diff`, then `wm_inspect` the worst frames.
 4. **Propose one change** to a skill, a `wm.yaml`, or a note in the session. In Creator mode, inspect the current plugin tree first.
 5. **Gate.** Re-run `fixtures/sunset` (must still report late-horizon drop) plus the user’s paired scene. Use `ablation-protocol`.
 6. **Solidify or roll back.** Keep the trajectory. Fork the session if the change is dirty. Prefer `dsh` replay over “I think it helped.”

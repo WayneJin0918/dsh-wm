@@ -23,4 +23,4 @@ If you have camera / pose traces: find return pairs with a gap, a translation/ro
 - **Flicker** — adjacent-frame instability, often a chunk boundary, not forgetting the room.
 - **Action accuracy** — did the control happen; orthogonal to coming home.
 
-Use skill `wm-revisit`. If Vision Toolkit is installed, `vision_glance` / `vision_pixel_diff` the first, mid, last, and worst windows after the numbers exist.
+Use skill `wm-revisit`. After the numbers exist, `wm_inspect` the first, mid, last, and worst windows.

@@ -20,7 +20,7 @@ Pixel similarity is a proxy. Pose-aligned revisit is a different measurement.
    - With poses or a revisit JSON: use those pair indices; do not invent them.
    - Without poses: compare first vs last pred frames (and first vs last GT) with `wm_rollout_diff`. Label the number **frame-similarity proxy, not geometric revisit**.
 5. Also glance at a mid-window. A good loop with a melted middle is still a failure.
-6. If DSH Vision Toolkit is present, run `vision_glance` or `vision_pixel_diff` on the first, mid, last, and worst windows. Keep the SSIM number from `wm_rollout_diff`; use toolkit tools only for what the pixels show.
+6. `wm_inspect` the run with `indices=first,mid,last` (and the worst indices from the diff). Keep the SSIM number from `wm_rollout_diff`; use the sheet and sketches for what the pixels show.
 
 ## Pitfalls
 
@@ -32,4 +32,4 @@ Pixel similarity is a proxy. Pose-aligned revisit is a different measurement.
 
 - The answer states whether poses were available.
 - If poses were missing, the phrase "not geometric revisit" appears.
-- Worst-window frames from `wm_rollout_diff` are cited.
+- Worst-window frames from `wm_rollout_diff` are cited, and `wm_inspect` ran on those indices.

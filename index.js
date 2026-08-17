@@ -1,9 +1,10 @@
-import { readdirSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { renderDiagnose, renderDiff, renderDiscover, renderKnowledge, renderSummarize } from './lib/card.js'
+import { renderDiagnose, renderDiff, renderDiscover, renderInspect, renderKnowledge, renderSummarize } from './lib/card.js'
 import { discover } from './lib/discover.js'
 import { rolloutDiff } from './lib/diff.js'
+import { inspectFrames } from './lib/inspect.js'
 import { diagnoseProblem, lookupKnowledge } from './lib/knowledge.js'
 import { summarize } from './lib/summarize.js'
 
@@ -87,7 +88,7 @@ export function apply(ctx) {
   ctx.tools.register(defineTool({
     name: 'wm_rollout_diff',
     description:
-      'Compare pred vs GT frame directories or videos with pure-JS luminance SSIM and MSE. Returns mean/min SSIM, a curve, the worst frames, and a one-line diagnosis. Videos need ffmpeg. This release has no LPIPS.',
+      'Compare pred vs GT frame directories or videos with pure-JS luminance SSIM and MSE. Returns mean/min SSIM, a curve, the worst frames, and a one-line diagnosis. Videos need ffmpeg.',
     parameters: {
       pred: { type: 'string', required: true, description: 'Prediction frames directory, image, or video' },
       gt: { type: 'string', required: true, description: 'Ground-truth frames directory, image, or video' },
@@ -99,6 +100,42 @@ export function apply(ctx) {
     },
     async execute(args) {
       return rolloutDiff(args.pred, args.gt, { maxFrames: args.max_frames ?? 64 })
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'wm_inspect',
+    description:
+      'Look at frames in a run, a frame directory, an image, or a video. Samples first/mid/last (or named indices), writes a contact-sheet PNG, and returns a luma sketch plus color/contrast look for each tile. Use this to see worst frames after wm_rollout_diff.',
+    parameters: {
+      path: { type: 'string', required: true, description: 'Run directory, frame directory, image, or video' },
+      indices: { type: 'string', description: 'Comma list such as 0,3,7 or first,mid,last' },
+      max_tiles: { type: 'number', description: 'Max tiles per strip (default 6)' },
+      pair: { type: 'string', description: 'Optional GT strip to stack under pred' },
+    },
+    output: {
+      schema: { type: 'object' },
+      render: (_args, value) => {
+        const blocks = [{ type: 'text', text: renderInspect(value) }]
+        if (value?.sheet && existsSync(value.sheet)) {
+          blocks.push({
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: 'image/png',
+              data: readFileSync(value.sheet).toString('base64'),
+            },
+          })
+        }
+        return blocks
+      },
+    },
+    async execute(args) {
+      return inspectFrames(args.path, {
+        indices: args.indices,
+        maxTiles: args.max_tiles ?? 6,
+        pair: args.pair,
+      })
     },
   }))
 

@@ -28,7 +28,7 @@
   "scripts": {
     "test": "node --test test/*.test.js",
     "fixtures": "node scripts/generate-fixtures.js",
-    "check": "node cli.js knowledge --id rsi-harness && node cli.js diagnose \"late collapse after the first chunk\" && node cli.js discover fixtures/sunset && node cli.js summarize fixtures/sunset && node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt"
+    "check": "node cli.js knowledge --id rsi-harness && node cli.js diagnose \"late collapse after the first chunk\" && node cli.js discover fixtures/sunset && node cli.js summarize fixtures/sunset && node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt && node cli.js inspect fixtures/sunset --indices first,mid,last"
   },
   "dsh": {
     "bundle": {
