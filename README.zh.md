@@ -1,8 +1,10 @@
+
+
 # DSH-WM
 
-[![MIT](https://img.shields.io/badge/license-MIT-0B7285?style=flat-square)](LICENSE)
-[![DSH](https://img.shields.io/badge/DSH-Web%20%2B%20Headless%20%2B%20wm-5B4CF0?style=flat-square)](cordis.patch.yml)
-[![Node](https://img.shields.io/badge/node-%3E%3D18-0B7285?style=flat-square)](package.json)
+[MIT](LICENSE)
+[DSH](cordis.patch.yml)
+[Node](package.json)
 
 **给 DeepSeek Harness 用的可玩世界模型工具箱——看条带、认路线、给 run 打分、迭代研究闭环。**
 
@@ -21,10 +23,11 @@ dsh --profile wm
 
 然后试一句：*分诊 `fixtures/sunset`。看 first / mid / last。是后半段崩了吗？*
 
+DeepSeek 的产品主线可以不做世界模型。Harness 仍是研究操作系统——这块插件就是上面的 WM 实验室。
+
 **运行时：** [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness)
 
-<details>
-<summary>目录</summary>
+目录
 
 - [30 秒就能玩](#30-秒就能玩)
 - [亮点](#亮点)
@@ -36,7 +39,7 @@ dsh --profile wm
 - [用 Harness 做 RSI](#用-harness-做-rsi)
 - [致谢](#致谢)
 
-</details>
+
 
 ## 30 秒就能玩
 
@@ -79,11 +82,13 @@ gt   #7  luma=160.4  low contrast, warm / orange
 
 「世界模型」这个词其实是三场研究游戏。卡片对照 [Awesome World Models](https://github.com/knightnemo/Awesome-World-Models) 的地图。设计 backbone 之前先打开 `wm-routes`。
 
-| 路线 | 卡片 | 在预测什么 | 「好」长什么样 | 场上常说的梗 |
-| --- | --- | --- | --- | --- |
-| **3D 显示** | `display-3d` | 能飞进去的几何（mesh、Gaussian、occupancy、4D） | 空间一致、可探索的场景 | 一致性是买来的；fly-through 在摇杆生效前只是展示 |
-| **Pixel / Video Gen WM** | `pixel-wm` | 下一帧像素（常带 action） | 还听摇杆的交互条带 | 「Sora 是世界模拟器吗？」；好看片 + 不听杆；Self-Forcing / 后半融化 |
-| **Latent Prediction** | `latent-wm` | 下一个紧凑状态（RSSM、JEPA、DINO） | 在梦里做规划和控制 | 别给每个像素付 loss；解码出来的视频只是投影 |
+
+| 路线                       | 卡片           | 在预测什么                               | 「好」长什么样     | 场上常说的梗                                        |
+| ------------------------ | ------------ | ----------------------------------- | ----------- | --------------------------------------------- |
+| **3D 显示**                | `display-3d` | 能飞进去的几何（mesh、Gaussian、occupancy、4D） | 空间一致、可探索的场景 | 一致性是买来的；fly-through 在摇杆生效前只是展示                |
+| **Pixel / Video Gen WM** | `pixel-wm`   | 下一帧像素（常带 action）                    | 还听摇杆的交互条带   | 「Sora 是世界模拟器吗？」；好看片 + 不听杆；Self-Forcing / 后半融化 |
+| **Latent Prediction**    | `latent-wm`  | 下一个紧凑状态（RSSM、JEPA、DINO）             | 在梦里做规划和控制   | 别给每个像素付 loss；解码出来的视频只是投影                      |
+
 
 回程忘了房间：像素条带上是 `revisit-eval`，3D 场景上是 pose / occupancy，JEPA / Dreamer 上是 latent mismatch。先认路线，再测量。
 
@@ -97,17 +102,19 @@ node cli.js diagnose "JEPA latent Dreamer"
 
 ## 适合谁用
 
-| 你想做的事 | DSH-WM 给你的 |
-| --- | --- |
-| **没有集群也想玩一次 rollout** | sunset + 笔记本上的 `wm_inspect` / `wm_rollout_diff` |
-| **看清这次 run 目录里有什么** | `wm_discover`：layout、路径、帧数、警告 |
-| **把 log 尾变成下一步实验** | `wm_summarize`：last loss / NaN / 早停 + 3 条假设 |
-| **给「看起来更差」一个数字** | `wm_rollout_diff`：mean/min SSIM、曲线、最差帧、诊断 |
-| **看那些最差帧** | `wm_inspect`：接触图、亮度草图、每块 look |
-| **把论文放到地图上** | `wm-routes` → `display-3d` / `pixel-wm` / `latent-wm` |
-| **消融说得过去** | `wm-ablation`：先成对 `(scene, protocol, seed)` 和 failure 率 |
-| **讨论「有没有回家」** | `wm-revisit`：几何 vs 帧相似度代理 |
-| **让 agent 更会 debug WM** | `wm-rsi`：一条声称、一张卡片、一次测量、一处 skill / `wm.yaml` 改动 |
+
+| 你想做的事                   | DSH-WM 给你的                                              |
+| ----------------------- | ------------------------------------------------------- |
+| **没有集群也想玩一次 rollout**   | sunset + 笔记本上的 `wm_inspect` / `wm_rollout_diff`         |
+| **看清这次 run 目录里有什么**     | `wm_discover`：layout、路径、帧数、警告                           |
+| **把 log 尾变成下一步实验**      | `wm_summarize`：last loss / NaN / 早停 + 3 条假设             |
+| **给「看起来更差」一个数字**        | `wm_rollout_diff`：mean/min SSIM、曲线、最差帧、诊断               |
+| **看那些最差帧**              | `wm_inspect`：接触图、亮度草图、每块 look                           |
+| **把论文放到地图上**            | `wm-routes` → `display-3d` / `pixel-wm` / `latent-wm`   |
+| **消融说得过去**              | `wm-ablation`：先成对 `(scene, protocol, seed)` 和 failure 率 |
+| **讨论「有没有回家」**           | `wm-revisit`：几何 vs 帧相似度代理                               |
+| **让 agent 更会 debug WM** | `wm-rsi`：一条声称、一张卡片、一次测量、一处 skill / `wm.yaml` 改动         |
+
 
 ## 快速开始：三步完成
 
@@ -156,36 +163,42 @@ Sora 是世界模拟器，还是还得过摇杆考试的 Pixel WM？
 
 ## 常见任务
 
-| 任务 | 推荐工作流 |
-| --- | --- |
-| 前五分钟 / 没有 GPU | `inspect` sunset → `diff` → `diagnose` 一个你在意的问题 |
-| 训练或评测 run 看起来不对 | `wm-run-triage` → discover → summarize → diff → inspect |
-| 这篇论文是哪条 WM 路线？ | `wm-routes` → `display-3d` / `pixel-wm` / `latent-wm` |
-| 「该用哪种 memory？」 | `wm-knowledge` → `chunk-ar` / `memory-types` / `kv-memory` → 再测量 |
-| 后半段融化，train loss 还很健康 | `wm_diagnose` → `exposure-bias` → scheduled sampling |
-| 哪个 cache / memory 配置赢了 | `wm-ablation` → 成对 n 和 failure 率 → 均值差 |
-| 相机有没有回来 | `wm-revisit` → 整段 diff → 没有 pose 才用首尾帧 |
-| 改进研究闭环本身 | `wm-rsi` → Creator / trajectory → 改一处 skill 或 `wm.yaml` → sunset 门禁 |
-| 离线 CI / 没有 API key | `node cli.js knowledge` / `diagnose` / `discover` / `diff` / `inspect` |
+
+| 任务                     | 推荐工作流                                                                  |
+| ---------------------- | ---------------------------------------------------------------------- |
+| 前五分钟 / 没有 GPU          | `inspect` sunset → `diff` → `diagnose` 一个你在意的问题                        |
+| 训练或评测 run 看起来不对        | `wm-run-triage` → discover → summarize → diff → inspect                |
+| 这篇论文是哪条 WM 路线？         | `wm-routes` → `display-3d` / `pixel-wm` / `latent-wm`                  |
+| 「该用哪种 memory？」         | `wm-knowledge` → `chunk-ar` / `memory-types` / `kv-memory` → 再测量       |
+| 后半段融化，train loss 还很健康  | `wm_diagnose` → `exposure-bias` → scheduled sampling                   |
+| 哪个 cache / memory 配置赢了 | `wm-ablation` → 成对 n 和 failure 率 → 均值差                                 |
+| 相机有没有回来                | `wm-revisit` → 整段 diff → 没有 pose 才用首尾帧                                 |
+| 改进研究闭环本身               | `wm-rsi` → Creator / trajectory → 改一处 skill 或 `wm.yaml` → sunset 门禁    |
+| 离线 CI / 没有 API key     | `node cli.js knowledge` / `diagnose` / `discover` / `diff` / `inspect` |
+
 
 ## 工具一览
 
 三类可以在同一次 session 里组合：
 
-| 类别 | 工具 | 职责 |
-| --- | --- | --- |
-| **测量** | `wm_discover`、`wm_summarize`、`wm_rollout_diff`、`wm_inspect` | 目录、log、pred vs GT 数字、看帧 |
-| **知识** | `wm_knowledge`、`wm_diagnose` | 路线 + 技术卡片，症状 → 下一步 |
-| **迭代** | skill `wm-run-triage`、`wm-knowledge`、`wm-rsi`、`wm-ablation`、`wm-revisit` | 诚实评测和 harness 层 RSI |
 
-| 工具 | 最适合解决的问题 | 主要结果 |
-| --- | --- | --- |
-| `wm_discover` | 「这个 run 目录里有什么？」 | layout、pred/gt/log/metrics、帧数、警告 |
-| `wm_summarize` | 「训练真的跑完了吗，下一步测什么？」 | last loss / NaN / 早停、指标键、3 条假设 |
-| `wm_rollout_diff` | 「pred 相对 GT 漂在哪？」 | mean/min SSIM、曲线、最差 3 帧、诊断 |
-| `wm_inspect` | 「first / mid / last / 最差帧长什么样？」 | 接触图、亮度草图、颜色 / 对比度 look |
-| `wm_knowledge` | 「哪条路线 / chunk-AR / KV / RSI 是什么？」 | 目录或一整张技术卡片 |
-| `wm_diagnose` | 「一回来就忘了——然后呢？」 | 卡片 id + 下一步工具 / skill |
+| 类别     | 工具                                                                       | 职责                      |
+| ------ | ------------------------------------------------------------------------ | ----------------------- |
+| **测量** | `wm_discover`、`wm_summarize`、`wm_rollout_diff`、`wm_inspect`              | 目录、log、pred vs GT 数字、看帧 |
+| **知识** | `wm_knowledge`、`wm_diagnose`                                             | 路线 + 技术卡片，症状 → 下一步      |
+| **迭代** | skill `wm-run-triage`、`wm-knowledge`、`wm-rsi`、`wm-ablation`、`wm-revisit` | 诚实评测和 harness 层 RSI     |
+
+
+
+| 工具                | 最适合解决的问题                          | 主要结果                             |
+| ----------------- | --------------------------------- | -------------------------------- |
+| `wm_discover`     | 「这个 run 目录里有什么？」                  | layout、pred/gt/log/metrics、帧数、警告 |
+| `wm_summarize`    | 「训练真的跑完了吗，下一步测什么？」                | last loss / NaN / 早停、指标键、3 条假设   |
+| `wm_rollout_diff` | 「pred 相对 GT 漂在哪？」                 | mean/min SSIM、曲线、最差 3 帧、诊断       |
+| `wm_inspect`      | 「first / mid / last / 最差帧长什么样？」   | 接触图、亮度草图、颜色 / 对比度 look           |
+| `wm_knowledge`    | 「哪条路线 / chunk-AR / KV / RSI 是什么？」 | 目录或一整张技术卡片                       |
+| `wm_diagnose`     | 「一回来就忘了——然后呢？」                    | 卡片 id + 下一步工具 / skill            |
+
 
 rollout 分数是 **亮度 SSIM + MSE**。看条带用内置的 `wm_inspect`。
 
@@ -247,6 +260,8 @@ flowchart LR
   rsi --> gate[sunset fixture 加成对场景]
 ```
 
+
+
 三层，一次 session：
 
 1. **知识** — 先认路线，再打开技术卡片。
@@ -289,16 +304,18 @@ dsh plugin --profile wm remove dsh-wm
 
 ## 常见问题
 
-| 问题 | 处理方式 |
-| --- | --- |
+
+| 问题                                | 处理方式                                                                                         |
+| --------------------------------- | -------------------------------------------------------------------------------------------- |
 | `--dump-config` 里没有 `# == dsh-wm` | 从 checkout 或 `github:WayneJin0918/dsh-wm` 重新 `dsh plugin --profile wm add`；确认 PATH 上有 `pnpm` |
-| 私有仓库的 git 安装失败 | 改用本地路径，或让这台机器的 `gh` / git 凭证能读 `WayneJin0918/dsh-wm` |
-| 提示 `pred not found` | 补一份 `wm.yaml`，或给 `wm_rollout_diff` 显式传 pred / gt |
-| 视频 / JPEG 被拒绝 | 安装 `ffmpeg`，或先抽成 PNG 帧 |
-| agent 不调工具就下结论 | 先加载 `wm-run-triage` 或 `wm-knowledge`；没有 layout / 没有卡片就没有结论 |
-| agent 对着聊天发明 KV 方案 | `wm_knowledge --id kv-memory` 再走 `wm-rsi`；先打开卡片 |
-| 把首尾 SSIM 当成 loop closure | 加载 `wm-revisit`；没有 pose 时那个数字只是代理 |
-| 「RSI」开始改训练代码 | 先停一下。`wm-rsi` 改的是 skill / `wm.yaml` / 评测备注，除非用户打开了训练任务 |
+| git 安装 404 或要登录 | 确认仓库已公开：`github:WayneJin0918/dsh-wm`；或改用本地路径安装 |
+| 提示 `pred not found`               | 补一份 `wm.yaml`，或给 `wm_rollout_diff` 显式传 pred / gt                                             |
+| 视频 / JPEG 被拒绝                     | 安装 `ffmpeg`，或先抽成 PNG 帧                                                                       |
+| agent 不调工具就下结论                    | 先加载 `wm-run-triage` 或 `wm-knowledge`；没有 layout / 没有卡片就没有结论                                   |
+| agent 对着聊天发明 KV 方案                | `wm_knowledge --id kv-memory` 再走 `wm-rsi`；先打开卡片                                              |
+| 把首尾 SSIM 当成 loop closure          | 加载 `wm-revisit`；没有 pose 时那个数字只是代理                                                            |
+| 「RSI」开始改训练代码                      | 先停一下。`wm-rsi` 改的是 skill / `wm.yaml` / 评测备注，除非用户打开了训练任务                                       |
+
 
 ## 开发
 

@@ -14,7 +14,7 @@ Broader research toolkit, not only run scoring.
 
 ## 0.1.0 — 2026-08-17
 
-Initial private release.
+Initial release.
 
 - Official DeepSeek Harness bundle (`dsh.bundle` + `cordis.patch.yml`), no `prepare` script.
 - Tools: `wm_discover`, `wm_summarize`, `wm_rollout_diff`.

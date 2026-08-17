@@ -21,6 +21,8 @@ dsh --profile wm
 
 Then try: *Triage `fixtures/sunset`. Look at first, mid, last. Is this late-horizon?*
 
+DeepSeek’s product mainline can skip world models. Harness is still the research OS — this plugin is the WM lab on top of it.
+
 **Runtime:** [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness)
 
 <details>
@@ -292,7 +294,7 @@ Restart the profile after enabling or upgrading.
 | Problem | What to do |
 | --- | --- |
 | `--dump-config` has no `# == dsh-wm` layer | Re-run `dsh plugin --profile wm add` from the checkout or `github:WayneJin0918/dsh-wm`; confirm `pnpm` is on PATH |
-| Git install fails on a private repo | Use a local path, or a machine whose `gh` / git credentials can read `WayneJin0918/dsh-wm` |
+| Git install 404s or asks for credentials | Confirm the repo is public at `github:WayneJin0918/dsh-wm`, or install from a local path |
 | `pred not found` | Add a `wm.yaml` or pass explicit `--pred` / `--gt` to `wm_rollout_diff` |
 | Video / JPEG rejected | Install `ffmpeg`, or extract PNG frames first |
 | Agent concludes without tools | Load `wm-run-triage` or `wm-knowledge` first; no layout / no card, no verdict |
