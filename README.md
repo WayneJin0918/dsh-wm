@@ -8,11 +8,13 @@
 
 Point the agent at a run directory and ask what happened, where the rollout drifts, and what to ablate next.
 
+🚀 Install with one command | Score a run without a GPU | Compose with Vision Toolkit when you need eyes
+
 🌐 **English** | [中文](README.zh.md)
 
-If you train or evaluate world models (video / action-conditioned generation, memory, revisit), you may have run into the same problems: the agent greps a 2 GB log, compares two runs that do not share a seed, or captions a last frame and calls it loop closure.
+If you train or evaluate world models (video / action-conditioned generation, memory, revisit) inside DeepSeek Harness, you may have run into the same problems: the model cannot see a rollout strip, a generic caption misses the failure mode, two runs are compared without a shared seed, and “looks close” has no number.
 
-This package is a DeepSeek Harness **profile bundle**, not a fork. It does not replace [dsh-vision-toolkit](https://github.com/Anionex/dsh-vision-toolkit) (image understanding). It scores and triages **runs**.
+This package is a DeepSeek Harness **profile bundle**, not a fork. It scores and triages **runs**. When the agent also needs to *look* at a frame — “what broke in this worst window?” — install [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit) beside it and reuse its vision modules (`vision_glance`, `vision_pixel_diff`, `vision_crop`). See the [toolkit homepage](https://agent-vision.anionex.me) for that layer.
 
 ```sh
 dsh plugin --profile wm add github:WayneJin0918/dsh-wm
@@ -27,6 +29,7 @@ dsh --profile wm
 - **Skills that keep the agent honest.** Triage, fair ablation, and revisit checks are installed into the Harness skill catalog.
 - **Works without Harness.** The same tools run as `node cli.js` for CI and offline demos.
 - **No GPU on day one.** Luminance SSIM + MSE in pure JS. Videos need `ffmpeg`; PNG/PPM frame folders do not.
+- **Compose with Vision Toolkit.** Keep numeric rollout scores here; hand worst frames to `vision_glance` / `vision_pixel_diff` / `vision_crop` when a text model needs eyes. Do not reimplement those tools.
 
 ## Who it is for
 
@@ -140,7 +143,32 @@ This project has two layers:
 1. **Tools** that only read the filesystem (no GPU, no training submit).
 2. **Skills** that tell the model when those tools are allowed to support a claim.
 
-[dsh-vision-toolkit](https://github.com/Anionex/dsh-vision-toolkit) is the complementary “eyes” plugin. Install both if the agent must look at a screenshot *and* score a rollout.
+## Compose with Vision Toolkit
+
+DSH-WM does not ship a vision model. For image Q&A, grounding, crop, and pixel heatmaps, use the modules already published by [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit) ([homepage](https://agent-vision.anionex.me)):
+
+```sh
+dsh plugin --profile wm add @anionex/dsh-vision-toolkit
+dsh plugin --profile wm add github:WayneJin0918/dsh-wm
+```
+
+| After DSH-WM finds… | Ask Vision Toolkit… |
+| --- | --- |
+| Worst frames from `wm_rollout_diff` | `vision_glance` — what actually broke in this window? |
+| A late-horizon drop | `vision_pixel_diff` — heatmap and ranked regions vs GT |
+| A single flash frame | `vision_crop` — isolate the bad region for the next note |
+| A UI / overlay in the eval viewer | `vision_ground` — original-pixel box, then crop |
+
+The toolkit’s homepage line still holds: paste or point at an image, get task-relevant evidence instead of a generic caption. DSH-WM only decides *which* frames are worth that call.
+
+```mermaid
+flowchart LR
+  run[Run directory] --> wm[dsh-wm tools]
+  wm --> score[SSIM curve and hypotheses]
+  score --> frames[Worst-frame paths]
+  frames --> vtk[vision_glance / vision_pixel_diff]
+  vtk --> answer[Number plus visual evidence]
+```
 
 ## Offline fixture
 
@@ -200,6 +228,15 @@ npm run check
 
 - See [CHANGELOG.md](CHANGELOG.md) for releases.
 - Use GitHub Issues on this private repository for bugs and focused requests.
+
+## Acknowledgements
+
+DSH-WM stands on two upstream projects. Thank you to their authors and the plugin format they made reusable.
+
+- **[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)** (`dsh`) — the official runtime this bundle installs into. Models, tools, skills, sessions, and the agent loop are plugins; we add a research profile layer instead of forking the tree. Docs: [deepseek.com/harness](https://deepseek.com/harness/en/).
+- **[DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit)** by [Anionex](https://anionex.me/), with upstream [agent-vision-toolkit](https://github.com/Anionex/agent-vision-toolkit) — the vision modules we compose with, and the publishing layout (bilingual README, three-step install, toolbox table) this page follows. Project site: [agent-vision.anionex.me](https://agent-vision.anionex.me).
+
+World-model scoring stays in this repository. Seeing a frame stays in theirs.
 
 ## License
 

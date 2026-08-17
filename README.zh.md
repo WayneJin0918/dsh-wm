@@ -8,11 +8,13 @@
 
 对着 run 目录问：这次怎么了、预测在哪漂了、下一步消融看什么。
 
+🚀 一行命令安装 ｜ 不占 GPU 也能给 run 打分 ｜ 需要看图时复用 Vision Toolkit
+
 🌐 [English](README.md) | **中文**
 
-如果你在做世界模型（视频 / 动作条件生成、memory、revisit），大概遇到过同一类问题：agent 去 grep 两 GB 的 log，拿两个不共享 seed 的 run 比均值，或对着最后一帧写一段描述就叫回环成功。
+如果你在 DeepSeek Harness 里训练或评测世界模型（视频 / 动作条件生成、memory、revisit），大概遇到过同一类问题：模型看不见 rollout 条带，一段笼统描述对不上失败模式，两个 run 没对齐 seed 就比均值，「看起来差不多」没有数字。
 
-这是 DeepSeek Harness 的 **profile bundle**，不是 fork。它不替代 [dsh-vision-toolkit](https://github.com/Anionex/dsh-vision-toolkit)（识图）。它只评测和分诊 **run**。
+这是 DeepSeek Harness 的 **profile bundle**，不是 fork。它评测和分诊 **run**。当 agent 还需要*看*某一帧——「最差窗口到底坏在哪」——请在旁边安装 [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit)，复用它的视觉模块（`vision_glance`、`vision_pixel_diff`、`vision_crop`）。那一层的介绍见 [toolkit 主页](https://agent-vision.anionex.me)。
 
 ```sh
 dsh plugin --profile wm add github:WayneJin0918/dsh-wm
@@ -27,6 +29,7 @@ dsh --profile wm
 - **Skill 管住 agent。** 分诊、公平消融、revisit 检查会进 Harness 的 skill 目录。
 - **没有 Harness 也能跑。** 同一套工具是 `node cli.js`，给 CI 和离线演示用。
 - **第一天不需要 GPU。** 纯 JS 亮度 SSIM + MSE。视频要 `ffmpeg`；PNG/PPM 帧目录可以完全离线。
+- **和 Vision Toolkit 组合。** 这里只出数值分数；最差帧交给 `vision_glance` / `vision_pixel_diff` / `vision_crop`。不要重写那一套识图工具。
 
 ## 适合谁用
 
@@ -140,7 +143,32 @@ flowchart LR
 1. **工具**只读文件系统（不占 GPU，不提交训练）。
 2. **Skill**规定模型什么时候才允许用这些工具下结论。
 
-[dsh-vision-toolkit](https://github.com/Anionex/dsh-vision-toolkit) 是互补的「眼睛」插件。既要看截图又要给 rollout 打分时，两个都装。
+## 和 Vision Toolkit 一起用
+
+DSH-WM 不内置视觉模型。图片问答、定位、裁剪、像素热力图，请用 [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit) 已经发布的模块（[主页](https://agent-vision.anionex.me)）：
+
+```sh
+dsh plugin --profile wm add @anionex/dsh-vision-toolkit
+dsh plugin --profile wm add github:WayneJin0918/dsh-wm
+```
+
+| DSH-WM 找到…… | 交给 Vision Toolkit…… |
+| --- | --- |
+| `wm_rollout_diff` 的最差帧 | `vision_glance` — 这个窗口到底坏在哪？ |
+| 后半段分数掉下去 | `vision_pixel_diff` — 相对 GT 的热力图和重点区域 |
+| 单帧闪了一下 | `vision_crop` — 把坏区域单独裁出来 |
+| 评测界面上的 UI / overlay | `vision_ground` — 原图像素框，再裁剪 |
+
+Toolkit 主页那句话仍然成立：对着图片提问，拿到和当前任务相关的证据，而不是一段通用看图作文。DSH-WM 只决定*哪些帧*值得那一次调用。
+
+```mermaid
+flowchart LR
+  run[Run 目录] --> wm[dsh-wm 工具]
+  wm --> score[SSIM 曲线和假设]
+  score --> frames[最差帧路径]
+  frames --> vtk[vision_glance / vision_pixel_diff]
+  vtk --> answer[数字加上视觉证据]
+```
 
 ## 离线 fixture
 
@@ -200,6 +228,15 @@ npm run check
 
 - 版本变化见 [CHANGELOG.md](CHANGELOG.md)。
 - Bug 和明确的功能请求请开本私有仓库的 GitHub Issues。
+
+## 致谢
+
+DSH-WM 建立在两个上游项目之上。感谢作者，以及他们让插件可以复用的格式。
+
+- **[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)**（`dsh`）——本 bundle 安装进去的官方运行时。模型、工具、skill、session 和 agent loop 都是插件；我们加的是研究 profile 层，而不是 fork 仓库。文档：[deepseek.com/harness](https://deepseek.com/harness/en/)。
+- **[DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit)**，作者 [Anionex](https://anionex.me/)，上游为 [agent-vision-toolkit](https://github.com/Anionex/agent-vision-toolkit)——我们组合使用的视觉模块，以及本页所参考的发布结构（双语 README、三步安装、工具表）。项目主页：[agent-vision.anionex.me](https://agent-vision.anionex.me)。
+
+世界模型打分留在本仓库。看懂一帧留在他们那边。
 
 ## 许可证
 
