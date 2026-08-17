@@ -14,14 +14,20 @@ function flag(args, name, fallback) {
 }
 
 function usage() {
-  return `dsh-wm — world-model research toolkit (no DeepSeek Harness required)
+  return `dsh-wm — playable world-model toolkit (DeepSeek Harness optional)
+
+Try the sunset playground (no GPU):
+  node cli.js inspect fixtures/sunset --indices first,mid,last
+  node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
+  node cli.js diagnose "is Sora a world simulator"
+  node cli.js knowledge --id wm-routes
 
 Usage:
   node cli.js discover <run-dir>
   node cli.js summarize <run-dir> [--tail 80]
   node cli.js diff --pred <path> --gt <path> [--max-frames 64]
   node cli.js knowledge [query]
-  node cli.js knowledge --id chunk-ar
+  node cli.js knowledge --id wm-routes
   node cli.js diagnose <symptom...>
   node cli.js inspect <path> [--indices first,mid,last] [--pair <gt>]
 `

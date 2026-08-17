@@ -2,7 +2,7 @@
 id: wm-routes
 title: Three world-model routes
 tags: routes, 3d, pixel, latent, taxonomy
-summary: Name the route first — 3D display, pixel / video-gen WM, or latent prediction. The same word “world model” is three research games.
+summary: Name the route first — 3D display, pixel / video-gen WM, or latent prediction. Same label, three games; open this card before a backbone.
 ---
 
 # Three routes

@@ -2,7 +2,7 @@
 id: pixel-wm
 title: Pixel / video-gen world models
 tags: pixel, video, sora, cosmos, genie, interactive
-summary: Predict the next pixels. Sora-as-simulator, GameNGen, Cosmos, Genie, Matrix-Game live here. A pretty clip is the baseline; the stick and the return trip are the exam.
+summary: Predict the next pixels — Sora, GameNGen, Cosmos, Genie, Matrix-Game. A pretty clip is the lobby; the stick and the return trip are the boss fight.
 ---
 
 # Pixel world models

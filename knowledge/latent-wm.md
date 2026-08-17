@@ -2,7 +2,7 @@
 id: latent-wm
 title: Latent prediction world models
 tags: latent, jepa, dreamer, rssm, planning
-summary: Predict the next compact state. Ha/Schmidhuber, Dreamer, JEPA, DINO-WM. The dream is for planning; a decoded video is a projector, not the loss.
+summary: Predict the next compact state — Ha/Schmidhuber, Dreamer, JEPA, DINO-WM. Plan in the dream; a decoded video is a projector, not the score.
 ---
 
 # Latent prediction

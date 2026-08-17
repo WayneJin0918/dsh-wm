@@ -1,7 +1,7 @@
 ---
 name: wm-revisit
-description: "Check long-horizon and loop-closure consistency. Without camera poses, use first/mid/last and worst-window frame similarity and say clearly this is not geometric revisit."
-whenToUse: "Use when the user asks about revisit, loop closure, going back, long-horizon drift, or why a return trip does not look like the start."
+description: "Play the return-trip check: full-strip consistency, first/mid/last plus worst windows, and a clear label — geometric revisit vs frame-similarity proxy."
+whenToUse: "Use when the user asks about revisit, loop closure, going back, long-horizon drift, or why the return trip does not look like home."
 ---
 
 # Revisit and long-horizon consistency

@@ -2,7 +2,7 @@
 id: display-3d
 title: 3D display world models
 tags: 3d, display, geometry, gaussian, occupancy, mesh
-summary: Predict or reconstruct a scene you can occupy — mesh, Gaussian, NeRF, BEV, 4D. Spatial consistency is in the representation. Dynamics and the stick are a second job.
+summary: Build a scene you can occupy — mesh, Gaussian, occupancy, 4D. Spatial consistency lives in the representation; the stick and the next state are the second exam.
 ---
 
 # 3D display

@@ -1,7 +1,7 @@
 ---
 name: wm-ablation
-description: "Compare world-model configs only on shared scene/protocol/seed pairs. Report paired n and failure rate before any mean difference."
-whenToUse: "Use when the user asks which memory, cache, or sampling config won, wants an ablation table, or is about to change a baseline after one lucky seed."
+description: "Keep the ablation game fair: compare WM configs only on shared scene/protocol/seed pairs, and report paired n plus failure rate before any mean."
+whenToUse: "Use when the user asks which memory, cache, or sampling config won, wants an ablation table, or is about to crown a winner after one lucky seed."
 ---
 
 # Fair ablation

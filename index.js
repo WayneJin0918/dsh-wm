@@ -55,7 +55,7 @@ export function apply(ctx) {
   ctx.tools.register(defineTool({
     name: 'wm_discover',
     description:
-      'Inspect a world-model run directory. Reads optional wm.yaml, otherwise uses heuristics. Call this before summarizing or diffing.',
+      'Open a world-model run directory: read optional wm.yaml or heuristics, then return layout, pred/gt/log/metrics, frame counts, and warnings. Call this before summarizing, diffing, or inspecting.',
     parameters: {
       path: { type: 'string', required: true, description: 'Run directory or repo root' },
     },
@@ -71,7 +71,7 @@ export function apply(ctx) {
   ctx.tools.register(defineTool({
     name: 'wm_summarize',
     description:
-      'Summarize a world-model run: log tail, metrics JSON keys, last loss / NaN / early-stop, and three testable failure hypotheses. Does not call a GPU.',
+      'Summarize a world-model run for the next experiment: log tail, metrics JSON keys, last loss / NaN / early-stop, and three testable hypotheses. No GPU.',
     parameters: {
       path: { type: 'string', required: true, description: 'Run directory' },
       tail_lines: { type: 'number', description: 'Log lines to read from the end (default 80)' },
@@ -88,7 +88,7 @@ export function apply(ctx) {
   ctx.tools.register(defineTool({
     name: 'wm_rollout_diff',
     description:
-      'Compare pred vs GT frame directories or videos with pure-JS luminance SSIM and MSE. Returns mean/min SSIM, a curve, the worst frames, and a one-line diagnosis. Videos need ffmpeg.',
+      'Score pred vs GT (frames or video) with pure-JS luminance SSIM and MSE. Returns mean/min SSIM, a curve, the worst frames, and a one-line diagnosis. Videos need ffmpeg.',
     parameters: {
       pred: { type: 'string', required: true, description: 'Prediction frames directory, image, or video' },
       gt: { type: 'string', required: true, description: 'Ground-truth frames directory, image, or video' },
@@ -106,7 +106,7 @@ export function apply(ctx) {
   ctx.tools.register(defineTool({
     name: 'wm_inspect',
     description:
-      'Look at frames in a run, a frame directory, an image, or a video. Samples first/mid/last (or named indices), writes a contact-sheet PNG, and returns a luma sketch plus color/contrast look for each tile. Use this to see worst frames after wm_rollout_diff.',
+      'Look at a world-model strip: sample first/mid/last or named indices from a run, frame dir, image, or video. Writes a contact-sheet PNG and a luma sketch plus color/contrast look per tile. Use after wm_rollout_diff names the worst frames.',
     parameters: {
       path: { type: 'string', required: true, description: 'Run directory, frame directory, image, or video' },
       indices: { type: 'string', description: 'Comma list such as 0,3,7 or first,mid,last' },
@@ -142,7 +142,7 @@ export function apply(ctx) {
   ctx.tools.register(defineTool({
     name: 'wm_knowledge',
     description:
-      'Look up built-in world-model technique cards: the three routes (3D display, pixel / video-gen WM, latent prediction), chunk-AR, memory types, KV memory, exposure bias, revisit eval, ablation, action following, cache eviction, RSI-in-Harness. Empty query lists the catalog; id opens one card.',
+      'Open the built-in WM map. Empty query lists the catalog; id opens one card. Start with wm-routes (3D display, pixel / video-gen, latent prediction), then technique cards (chunk-AR, memory, KV, exposure bias, revisit, ablation, action following, cache eviction, RSI-in-Harness).',
     parameters: {
       query: { type: 'string', description: 'Free-text search (memory, revisit, RSI, KV, …)' },
       id: { type: 'string', description: 'Exact card id, e.g. chunk-ar, rsi-harness' },
@@ -159,7 +159,7 @@ export function apply(ctx) {
   ctx.tools.register(defineTool({
     name: 'wm_diagnose',
     description:
-      'Map a world-model symptom (late collapse, forgotten room, ignored action, one-seed win, …) to knowledge cards and the next DSH-WM / RSI step. Use before inventing a new architecture.',
+      'Map a world-model symptom or paper claim (late collapse, forgotten room, “is Sora a simulator?”, one-seed win) to route/technique cards and the next DSH-WM step. Use before inventing a new architecture.',
     parameters: {
       symptom: { type: 'string', required: true, description: 'What you observed in the run or the paper claim' },
     },

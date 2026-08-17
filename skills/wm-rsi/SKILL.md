@@ -1,7 +1,7 @@
 ---
 name: wm-rsi
-description: "Use DeepSeek Harness as an RSI loop on world-model research: trajectory, fork, Creator, fixtures, and this bundle’s knowledge — evolve skills, eval recipes, and hypotheses, not a silent backbone rewrite."
-whenToUse: "Use when the user wants to iterate on a WM failure with the harness itself: improve the eval, the memory recipe note, the skill, or the next experiment — and keep a replayable gate."
+description: "Play an RSI loop on the WM research process: one claim, one card, one measurement, one skill or wm.yaml change, gated on fixtures/sunset and a paired scene."
+whenToUse: "Use when the user wants the harness itself to tighten how we debug world models — the eval, the memory note, the skill, or the next experiment — and keep a replayable gate."
 ---
 
 # RSI for world-model problems in Harness

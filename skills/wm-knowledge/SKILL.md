@@ -1,7 +1,7 @@
 ---
 name: wm-knowledge
-description: "Look up built-in world-model technique cards before proposing an architecture, memory recipe, or eval protocol. Covers the three routes (3D display, pixel / video-gen WM, latent prediction), chunk-AR, KV memory, eviction, exposure bias, revisit, ablation, and RSI-in-Harness."
-whenToUse: "Use when the user asks which WM lineage they are in (3D vs pixel vs latent), how to design memory, KV cache, long-horizon training, revisit metrics, or what a failure mode means. Prefer this over inventing a new backbone from a chat."
+description: "Open the built-in WM map: three routes (3D display, pixel / video-gen, latent prediction) plus technique cards for memory, KV, exposure bias, revisit, ablation, and RSI-in-Harness."
+whenToUse: "Use when the user asks which lineage a paper is on, whether Sora counts, how to design memory, or what a failure mode is called. Open a card before inventing a backbone."
 ---
 
 # Built-in world-model knowledge

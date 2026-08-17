@@ -1,6 +1,6 @@
 # Contributing
 
-This repository is private. Open an issue or a short PR on the same GitHub remote.
+This repository is the DSH world-model toolkit. Open an issue or a short PR on the same GitHub remote. Keep README copy playable and affirmative.
 
 ## Checks
 

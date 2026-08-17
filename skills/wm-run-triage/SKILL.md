@@ -1,7 +1,7 @@
 ---
 name: wm-run-triage
-description: "Triage a world-model run: discover layout, summarize logs/metrics, diff pred vs GT, then look at the worst frames with wm_inspect."
-whenToUse: "Use when the user points at a run directory, train log, or eval output and asks what went wrong, whether the run finished, or what to look at next."
+description: "Walk a world-model run like a playground level: discover the layout, summarize the log, diff pred vs GT, then look at the worst frames with wm_inspect."
+whenToUse: "Use when the user points at a run, fixtures/sunset, a train log, or eval output and wants to play through what failed, whether it finished, or what to look at next."
 ---
 
 # World-model run triage
