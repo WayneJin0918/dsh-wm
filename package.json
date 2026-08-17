@@ -1,7 +1,7 @@
 {
   "name": "dsh-wm",
   "version": "0.2.0",
-  "description": "World-model research toolkit for DeepSeek Harness: run metrics, built-in WM knowledge, and RSI on the research loop.",
+  "description": "World-model research toolkit for DeepSeek Harness: measure runs, built-in WM knowledge, and RSI on the research loop.",
   "type": "module",
   "main": "index.js",
   "bin": {
@@ -28,7 +28,7 @@
   "scripts": {
     "test": "node --test test/*.test.js",
     "fixtures": "node scripts/generate-fixtures.js",
-    "check": "node cli.js discover fixtures/sunset && node cli.js summarize fixtures/sunset && node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt"
+    "check": "node cli.js knowledge --id rsi-harness && node cli.js diagnose \"late collapse after the first chunk\" && node cli.js discover fixtures/sunset && node cli.js summarize fixtures/sunset && node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt"
   },
   "dsh": {
     "bundle": {
@@ -56,11 +56,11 @@
     "dsh",
     "dsh-plugin",
     "world-model",
-    "ssim",
-    "rollout",
-    "research",
+    "knowledge",
     "rsi",
-    "knowledge"
+    "research",
+    "ssim",
+    "rollout"
   ],
   "repository": {
     "type": "git",

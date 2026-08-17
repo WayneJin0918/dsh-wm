@@ -87,7 +87,7 @@ export function apply(ctx) {
   ctx.tools.register(defineTool({
     name: 'wm_rollout_diff',
     description:
-      'Compare pred vs GT frame directories or videos with pure-JS luminance SSIM and MSE. Returns mean/min SSIM, a curve, the worst frames, and a one-line diagnosis. Videos need ffmpeg; day-1 has no LPIPS.',
+      'Compare pred vs GT frame directories or videos with pure-JS luminance SSIM and MSE. Returns mean/min SSIM, a curve, the worst frames, and a one-line diagnosis. Videos need ffmpeg. This release has no LPIPS; compose Vision Toolkit for heatmaps.',
     parameters: {
       pred: { type: 'string', required: true, description: 'Prediction frames directory, image, or video' },
       gt: { type: 'string', required: true, description: 'Ground-truth frames directory, image, or video' },

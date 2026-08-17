@@ -21,6 +21,22 @@ dsh plugin --profile wm add github:WayneJin0918/dsh-wm
 dsh --profile wm
 ```
 
+**上游运行时：** [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) · **视觉层：** [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit) · [agent-vision.anionex.me](https://agent-vision.anionex.me)
+
+<details>
+<summary>目录</summary>
+
+- [亮点](#亮点)
+- [适合谁用](#适合谁用)
+- [快速开始：三步完成](#快速开始三步完成)
+- [常见任务](#常见任务)
+- [工具一览](#工具一览)
+- [用 Harness 做 RSI](#用-harness-做-rsi)
+- [和 Vision Toolkit 一起用](#和-vision-toolkit-一起用)
+- [致谢](#致谢)
+
+</details>
+
 ## 亮点
 
 - **一行命令安装。** 官方 bundle 格式，纯 JavaScript，没有 `prepare` / `allowBuilds`。
@@ -29,8 +45,8 @@ dsh --profile wm
 - **内置 WM 知识。** chunk-AR、memory 类型、KV memory、exposure bias、revisit 与代理、消融、action following、cache eviction、Harness 上的 RSI。先 `wm_knowledge` / `wm_diagnose`，再谈新结构。
 - **RSI 作用在 harness 层。** skill `wm-rsi` 用 DSH trajectory、fork、Creator 和 `fixtures/sunset` 去演化 skill、`wm.yaml` 和评测配方——不是默默改 backbone。
 - **Skill 管住 agent。** 分诊、知识、RSI、公平消融、revisit。
-- **没有 Harness 也能跑。** 同一套工具是 `node cli.js`，给 CI 和离线演示用。
-- **第一天不需要 GPU。** 纯 JS 亮度 SSIM + MSE。视频要 `ffmpeg`；PNG/PPM 帧目录可以完全离线。
+- **没有 Harness 也能跑。** 同一套工具是 `node cli.js`，给 CI 和离线演示用，包括 `knowledge` 和 `diagnose`。
+- **起步不需要 GPU。** rollout 分数是纯 JS 亮度 SSIM + MSE。视频要 `ffmpeg`；PNG/PPM 帧目录可以完全离线。
 - **和 Vision Toolkit 组合。** 这里只出数值分数；最差帧交给 `vision_glance` / `vision_pixel_diff` / `vision_crop`。不要重写那一套识图工具。
 
 ## 适合谁用
@@ -83,12 +99,14 @@ Web profile 加完 bundle 后请重启，并开一个新 session，让 skill 目
 不装 Harness 时：
 
 ```sh
+node cli.js knowledge --id rsi-harness
+node cli.js diagnose "回程忘了房间"
 node cli.js discover fixtures/sunset
 node cli.js summarize fixtures/sunset
 node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
 ```
 
-### 3. 指着一次 run，直接说你要什么
+### 3. 问研究问题，而不只是「对比这两个文件夹」
 
 在 run 根放 `wm.yaml`（或靠启发式），然后问：
 
@@ -113,6 +131,14 @@ node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
 
 ## 工具一览
 
+三类，和 Vision Toolkit 的「理解 / 动手 / 验证」同一分法，只是对准世界模型研究：
+
+| 类别 | 工具 | 职责 |
+| --- | --- | --- |
+| **测量** | `wm_discover`、`wm_summarize`、`wm_rollout_diff` | 目录、log、pred vs GT 数字 |
+| **知识** | `wm_knowledge`、`wm_diagnose` | 技术卡片，症状 → 下一步 |
+| **迭代** | skill `wm-rsi`、`wm-knowledge`、`wm-ablation`、`wm-revisit` | harness 层 RSI 和诚实评测 |
+
 | 工具 | 最适合解决的问题 | 主要结果 |
 | --- | --- | --- |
 | `wm_discover` | 「这个 run 目录里有什么？」 | layout、pred/gt/log/metrics、帧数、警告 |
@@ -121,7 +147,7 @@ node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
 | `wm_knowledge` | 「chunk-AR / KV memory / Harness 上的 RSI 是什么？」 | 目录或一整张技术卡片 |
 | `wm_diagnose` | 「一回来就忘了——然后呢？」 | 卡片 id + 下一步工具 / skill |
 
-第一天的指标是 **亮度 SSIM + MSE**。还没有 LPIPS / RAFT；以后可以用 `--backend lpips` 去包本地 Python 环境。
+本版本的 rollout 分数是 **亮度 SSIM + MSE**。还没有 LPIPS / RAFT；以后可以用 `--backend lpips` 去包本地 Python 环境。
 
 ### 知识卡片
 
@@ -171,20 +197,18 @@ metrics: metrics.json       # 任意 JSON；只做 key 摘要，不校验 schema
 
 ```mermaid
 flowchart LR
-  run[Run 目录] --> discover[wm_discover]
-  discover --> yaml[wm.yaml 或启发式]
-  yaml --> summarize[wm_summarize]
-  yaml --> diff[wm_rollout_diff]
-  summarize --> card[log 尾和假设]
-  diff --> curve[SSIM 曲线和最差帧]
-  card --> agent[Agent 带着证据回答]
-  curve --> agent
+  ask[研究问题] --> know[wm_knowledge / wm_diagnose]
+  know --> measure[wm_discover / summarize / diff]
+  measure --> rsi[wm-rsi 改 skill 和 wm.yaml]
+  rsi --> gate[sunset fixture 加成对场景]
+  measure --> eyes[可选 vision_glance]
 ```
 
-项目分两层：
+项目分三层：
 
-1. **工具**只读文件系统（不占 GPU，不提交训练）。
-2. **Skill**规定模型什么时候才允许用这些工具下结论。
+1. **知识** — 设计前必须打开的技术卡片。
+2. **测量** — 读文件系统的工具（不占 GPU，不提交训练）。
+3. **RSI** — 只允许改研究闭环（不是 U-Net），并且要通过 fixture 门禁。
 
 ## 和 Vision Toolkit 一起用
 
@@ -247,9 +271,9 @@ dsh plugin --profile wm remove dsh-wm
 
 启用或升级后请重启 profile。
 
-### 0.1.0 明确不做
+### 0.2.0 明确不做
 
-不 fork Harness，不做自定义视频时间轴 UI，不接 W&B / slurm 提交，不写 DreamX / Omni-world / OpenWAM 适配器，不做 LPIPS、光流和 RSI / evolver。这些留给后续插件，调用本仓库的目录约定即可。
+仍然不做：fork Harness、自定义视频时间轴 UI、W&B / slurm 提交、DreamX / Omni-world / OpenWAM 适配器、LPIPS / 光流，以及**改权重**的 evolver。过程 RSI（`wm-rsi` 改 skill、`wm.yaml`、评测备注）**已经在本版本里**。
 
 ## 常见问题
 
@@ -259,8 +283,10 @@ dsh plugin --profile wm remove dsh-wm
 | 私有仓库的 git 安装失败 | 改用本地路径，或让这台机器的 `gh` / git 凭证能读 `WayneJin0918/dsh-wm` |
 | 提示 `pred not found` | 补一份 `wm.yaml`，或给 `wm_rollout_diff` 显式传 pred / gt |
 | 视频 / JPEG 被拒绝 | 安装 `ffmpeg`，或先抽成 PNG 帧 |
-| agent 不调工具就下结论 | 先加载 `wm-run-triage`；这个 skill 禁止没有 layout 的结论 |
+| agent 不调工具就下结论 | 先加载 `wm-run-triage` 或 `wm-knowledge`；没有 layout / 没有卡片就没有结论 |
+| agent 对着聊天发明 KV 方案 | `wm_knowledge --id kv-memory` 再走 `wm-rsi`；不许跳过卡片 |
 | 把首尾 SSIM 当成 loop closure | 加载 `wm-revisit`；没有 pose 时那个数字只是代理 |
+| 「RSI」开始改训练代码 | 停下。`wm-rsi` 只改 skill / `wm.yaml` / 评测备注，除非用户明确打开了训练任务 |
 
 ## 开发
 
@@ -279,7 +305,7 @@ DSH-WM 建立在两个上游项目之上。感谢作者，以及他们让插件�
 - **[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)**（`dsh`）——本 bundle 安装进去的官方运行时。模型、工具、skill、session 和 agent loop 都是插件；我们加的是研究 profile 层，而不是 fork 仓库。文档：[deepseek.com/harness](https://deepseek.com/harness/en/)。
 - **[DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit)**，作者 [Anionex](https://anionex.me/)，上游为 [agent-vision-toolkit](https://github.com/Anionex/agent-vision-toolkit)——我们组合使用的视觉模块，以及本页所参考的发布结构（双语 README、三步安装、工具表）。项目主页：[agent-vision.anionex.me](https://agent-vision.anionex.me)。
 
-世界模型打分留在本仓库。看懂一帧留在他们那边。
+世界模型的知识、测量和过程 RSI 留在本仓库。看懂一帧留在他们那边。
 
 ## 许可证
 

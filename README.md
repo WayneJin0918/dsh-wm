@@ -21,6 +21,22 @@ dsh plugin --profile wm add github:WayneJin0918/dsh-wm
 dsh --profile wm
 ```
 
+**Upstream runtime:** [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) · **Vision layer:** [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit) · [agent-vision.anionex.me](https://agent-vision.anionex.me)
+
+<details>
+<summary>Table of contents</summary>
+
+- [Highlights](#highlights)
+- [Who it is for](#who-it-is-for)
+- [Quick start: three steps](#quick-start-three-steps)
+- [Common workflows](#common-workflows)
+- [Toolbox](#toolbox)
+- [RSI with Harness](#rsi-with-harness)
+- [Compose with Vision Toolkit](#compose-with-vision-toolkit)
+- [Acknowledgements](#acknowledgements)
+
+</details>
+
 ## Highlights
 
 - **One command to install.** Official bundle format, pure JavaScript, no `prepare` / `allowBuilds`.
@@ -29,8 +45,8 @@ dsh --profile wm
 - **Built-in WM knowledge.** Cards for chunk-AR, memory types, KV memory, exposure bias, revisit vs proxy, ablation, action following, cache eviction, and RSI-in-Harness. `wm_knowledge` / `wm_diagnose` before a new architecture.
 - **RSI on the harness layer.** Skill `wm-rsi` uses DSH trajectory, fork, Creator, and `fixtures/sunset` to evolve skills, `wm.yaml`, and eval recipes — not to silently rewrite the backbone.
 - **Skills that keep the agent honest.** Triage, knowledge, RSI, fair ablation, revisit.
-- **Works without Harness.** The same tools run as `node cli.js` for CI and offline demos.
-- **No GPU on day one.** Luminance SSIM + MSE in pure JS. Videos need `ffmpeg`; PNG/PPM frame folders do not.
+- **Works without Harness.** The same tools run as `node cli.js` for CI and offline demos — including `knowledge` and `diagnose`.
+- **No GPU required to start.** Rollout scores are luminance SSIM + MSE in pure JS. Videos need `ffmpeg`; PNG/PPM frame folders do not.
 - **Compose with Vision Toolkit.** Keep numeric rollout scores here; hand worst frames to `vision_glance` / `vision_pixel_diff` / `vision_crop` when a text model needs eyes. Do not reimplement those tools.
 
 ## Who it is for
@@ -83,12 +99,14 @@ Restart a running Web profile after adding the bundle, then start a new session 
 Without Harness:
 
 ```sh
+node cli.js knowledge --id rsi-harness
+node cli.js diagnose "return trip forgot the room"
 node cli.js discover fixtures/sunset
 node cli.js summarize fixtures/sunset
 node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
 ```
 
-### 3. Point at a run and say what you want
+### 3. Ask a research question, not only “diff these folders”
 
 Put a `wm.yaml` in the run root (or rely on heuristics), then ask:
 
@@ -113,6 +131,14 @@ These two runs claim a memory win — are they paired on scene/protocol/seed?
 
 ## Toolbox
 
+Three families — same split as Vision Toolkit (understand / act / verify), aimed at world-model research:
+
+| Family | Tools | Job |
+| --- | --- | --- |
+| **Measure** | `wm_discover`, `wm_summarize`, `wm_rollout_diff` | Layout, logs, pred vs GT numbers |
+| **Know** | `wm_knowledge`, `wm_diagnose` | Technique cards and symptom → next step |
+| **Iterate** | skills `wm-rsi`, `wm-knowledge`, `wm-ablation`, `wm-revisit` | Harness-layer RSI and honest eval |
+
 | Tool | Best question to ask | Main result |
 | --- | --- | --- |
 | `wm_discover` | “What is in this run directory?” | layout, pred/gt/log/metrics, frame counts, warnings |
@@ -121,7 +147,7 @@ These two runs claim a memory win — are they paired on scene/protocol/seed?
 | `wm_knowledge` | “What is chunk-AR / KV memory / RSI in Harness?” | catalog or a full technique card |
 | `wm_diagnose` | “It forgets when we come back — now what?” | card ids + next tool / skill |
 
-Day-1 metrics are **luminance SSIM + MSE**. There is no LPIPS / RAFT yet; a later `--backend lpips` can wrap a local Python env.
+Rollout scores in this release are **luminance SSIM + MSE**. There is no LPIPS / RAFT yet; a later `--backend lpips` can wrap a local Python env.
 
 ### Knowledge cards
 
@@ -171,20 +197,18 @@ Without the file, the plugin looks for `pred|preds|recon`, `gt|target|ref`, `tra
 
 ```mermaid
 flowchart LR
-  run[Run directory] --> discover[wm_discover]
-  discover --> yaml[wm.yaml or heuristics]
-  yaml --> summarize[wm_summarize]
-  yaml --> diff[wm_rollout_diff]
-  summarize --> card[Log tail and hypotheses]
-  diff --> curve[SSIM curve and worst frames]
-  card --> agent[Agent answers with evidence]
-  curve --> agent
+  ask[Research question] --> know[wm_knowledge / wm_diagnose]
+  know --> measure[wm_discover / summarize / diff]
+  measure --> rsi[wm-rsi on skills and wm.yaml]
+  rsi --> gate[sunset fixture plus paired scene]
+  measure --> eyes[optional vision_glance]
 ```
 
-This project has two layers:
+This project has three layers:
 
-1. **Tools** that only read the filesystem (no GPU, no training submit).
-2. **Skills** that tell the model when those tools are allowed to support a claim.
+1. **Knowledge** — technique cards the agent must open before designing.
+2. **Measure** — filesystem tools (no GPU, no training submit).
+3. **RSI** — skills that may change the research loop (not the U-Net) and must pass a fixture gate.
 
 ## Compose with Vision Toolkit
 
@@ -247,9 +271,9 @@ To disable the bundle temporarily, set this in the profile patch:
 
 Restart the profile after enabling or upgrading.
 
-### Not in 0.1.0
+### Not in 0.2.0
 
-Forking Harness, a custom video timeline UI, W&B / slurm submit, DreamX / Omni-world / OpenWAM adapters, LPIPS, optical flow, and RSI / evolver. Those belong in later plugins that call this layout contract.
+Still out of scope: forking Harness, a custom video timeline UI, W&B / slurm submit, DreamX / Omni-world / OpenWAM adapters, LPIPS / optical flow, and a **weight-level** evolver. Process RSI (`wm-rsi` on skills, `wm.yaml`, and eval notes) **is** in this release.
 
 ## Troubleshooting
 
@@ -259,8 +283,10 @@ Forking Harness, a custom video timeline UI, W&B / slurm submit, DreamX / Omni-w
 | Git install fails on a private repo | Use a local path, or a machine whose `gh` / git credentials can read `WayneJin0918/dsh-wm` |
 | `pred not found` | Add a `wm.yaml` or pass explicit `--pred` / `--gt` to `wm_rollout_diff` |
 | Video / JPEG rejected | Install `ffmpeg`, or extract PNG frames first |
-| Agent concludes without tools | Load `wm-run-triage` before asking; the skill forbids a layout-free verdict |
+| Agent concludes without tools | Load `wm-run-triage` or `wm-knowledge` first; no layout / no card, no verdict |
+| Agent invents a KV design from chat | `wm_knowledge --id kv-memory` then `wm-rsi`; do not skip the card |
 | First-last SSIM treated as loop closure | Load `wm-revisit`; without poses that number is a proxy only |
+| “RSI” started rewriting training code | Stop. `wm-rsi` only changes skills / `wm.yaml` / eval notes unless the user opened a train job |
 
 ## Development
 
@@ -279,7 +305,7 @@ DSH-WM stands on two upstream projects. Thank you to their authors and the plugi
 - **[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)** (`dsh`) — the official runtime this bundle installs into. Models, tools, skills, sessions, and the agent loop are plugins; we add a research profile layer instead of forking the tree. Docs: [deepseek.com/harness](https://deepseek.com/harness/en/).
 - **[DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit)** by [Anionex](https://anionex.me/), with upstream [agent-vision-toolkit](https://github.com/Anionex/agent-vision-toolkit) — the vision modules we compose with, and the publishing layout (bilingual README, three-step install, toolbox table) this page follows. Project site: [agent-vision.anionex.me](https://agent-vision.anionex.me).
 
-World-model scoring stays in this repository. Seeing a frame stays in theirs.
+World-model knowledge, measurement, and process RSI stay in this repository. Seeing a frame stays in theirs.
 
 ## License
 

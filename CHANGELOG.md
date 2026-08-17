@@ -8,6 +8,7 @@ Broader research toolkit, not only run scoring.
 - Skills: `wm-knowledge`, `wm-rsi`.
 - Built-in cards: chunk-AR, memory types, KV memory, exposure bias, revisit, ablation, action following, cache eviction, RSI-in-Harness, diagnosis map.
 - README / 中文页按 Vision Toolkit 的广度重写：知识、RSI、测量三条工作流并列。
+- Publish copy aligned: GitHub description, toolbox families (measure / know / iterate), “Not in 0.2.0” no longer lists process RSI as missing.
 
 ## 0.1.0 — 2026-08-17
 

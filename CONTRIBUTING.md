@@ -9,6 +9,12 @@ npm test
 npm run check
 ```
 
-Keep day-1 scope: filesystem tools, `wm.yaml`, and skills. Do not add a Harness fork, a video timeline UI, or a GPU metric backend unless the issue explicitly asks for it.
+`check` must cover **know + measure**: `knowledge`, `diagnose`, and the sunset discover/summarize/diff path.
 
-Match the publishing layout of [dsh-vision-toolkit](https://github.com/Anionex/dsh-vision-toolkit) when you change user-facing docs: bilingual README, a toolbox table, a three-step quick start, and a changelog entry.
+## Scope (0.2.0)
+
+In scope: filesystem measure tools, `wm.yaml`, built-in knowledge cards, diagnosis, and harness-layer RSI skills.
+
+Out of scope unless an issue asks: a Harness fork, a video timeline UI, a GPU metric backend (LPIPS / RAFT), weight-level evolver, W&B / slurm submit.
+
+Match the publishing layout of [dsh-vision-toolkit](https://github.com/Anionex/dsh-vision-toolkit): bilingual README, toolbox families (measure / know / iterate), a three-step quick start, and a changelog entry. If you add a tool or card, update the GitHub repo description only when the one-line product pitch changes.

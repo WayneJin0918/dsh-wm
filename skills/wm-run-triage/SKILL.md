@@ -1,6 +1,6 @@
 ---
 name: wm-run-triage
-description: "Triage a world-model training or inference run: discover the directory layout, summarize logs/metrics, then diff pred vs GT only after the paths are known."
+description: "Triage a world-model run: discover layout, summarize logs/metrics, diff pred vs GT, then optionally open a knowledge card or Vision Toolkit on the worst frames."
 whenToUse: "Use when the user points at a run directory, train log, or eval output and asks what went wrong, whether the run finished, or what to look at next."
 ---
 

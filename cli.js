@@ -13,7 +13,7 @@ function flag(args, name, fallback) {
 }
 
 function usage() {
-  return `dsh-wm — world-model research tools (no DeepSeek Harness required)
+  return `dsh-wm — world-model research toolkit (no DeepSeek Harness required)
 
 Usage:
   node cli.js discover <run-dir>
