@@ -4,24 +4,24 @@
 [![DSH](https://img.shields.io/badge/DSH-Web%20%2B%20Headless%20%2B%20wm-5B4CF0?style=flat-square)](cordis.patch.yml)
 [![Node](https://img.shields.io/badge/node-%3E%3D18-0B7285?style=flat-square)](package.json)
 
-**给世界模型研究者用的 DeepSeek Harness 工具箱：测量 run、内置 WM 技术知识、用 Harness 做研究过程上的 RSI——不是三个评测命令。**
+**给世界模型研究者用的 DeepSeek Harness 工具箱：测量 run、内置技术知识、对研究闭环做 RSI。**
 
-问回程为什么忘了房间、sparse memory 有没有资格赢 FIFO、Creator 该怎么迭代一个 skill——拿到的是卡片、测量和回滚，不是聊天里长出来的新 U-Net。
+问回程为什么忘了房间、sparse memory 在成对 seed 上能不能赢 FIFO、Creator 该怎么迭代一个 skill——拿到的是卡片、测量和回滚。
 
-🚀 一行命令安装 ｜ 内置 WM 知识 ｜ 对 skill / eval 做 RSI ｜ 需要看图时复用 Vision Toolkit
+🚀 一行命令安装 ｜ 内置 WM 知识 ｜ 对 skill / eval 做 RSI
 
 🌐 [English](README.md) | **中文**
 
-如果你在 DeepSeek Harness 里训练或评测世界模型（视频 / 动作条件生成、memory、revisit），大概遇到过同一类问题：模型看不见 rollout 条带，一段笼统描述对不上失败模式，两个 run 没对齐 seed 就比均值，「看起来差不多」没有数字。
+在 DeepSeek Harness 里做世界模型（视频 / 动作条件生成、memory、revisit）时，常见麻烦是：rollout 没有 layout、两个 run 对不齐 seed、「看起来差不多」没有数字。
 
-这是 DeepSeek Harness 的 **profile bundle**，不是 fork。范围上更接近 [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit)（知识 + skill + 可组合工具），而不是一次性评测脚本。给 run 打分只是其中一条工作流。其余是：内置技术卡片、症状 → 下一步诊断、以及用 Harness 的 trajectory / Creator / fixture 去改进**研究闭环**的 RSI。必须*看见*某一帧时，复用 toolkit 的视觉模块（[主页](https://agent-vision.anionex.me)）。
+这个 profile bundle 提供技术卡片、症状 → 下一步诊断、run 测量，以及用 Harness trajectory、Creator、fixture 收紧 debug 方式的 RSI。
 
 ```sh
 dsh plugin --profile wm add github:WayneJin0918/dsh-wm
 dsh --profile wm
 ```
 
-**上游运行时：** [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) · **视觉层：** [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit) · [agent-vision.anionex.me](https://agent-vision.anionex.me)
+**运行时：** [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness)
 
 <details>
 <summary>目录</summary>
@@ -32,7 +32,6 @@ dsh --profile wm
 - [常见任务](#常见任务)
 - [工具一览](#工具一览)
 - [用 Harness 做 RSI](#用-harness-做-rsi)
-- [和 Vision Toolkit 一起用](#和-vision-toolkit-一起用)
 - [致谢](#致谢)
 
 </details>
@@ -41,13 +40,12 @@ dsh --profile wm
 
 - **一行命令安装。** 官方 bundle 格式，纯 JavaScript，没有 `prepare` / `allowBuilds`。
 - **一次 run 是一个目录，不是感觉。** 可选 `wm.yaml` 声明 pred / gt / log / metrics；没有清单就启发式；认不出就返回候选和警告，不编路径。
-- **有 run 再测量。** `wm_discover` → `wm_summarize` → `wm_rollout_diff` 是数值闭环，不是全部产品。
+- **有 run 就测量。** `wm_discover` → `wm_summarize` → `wm_rollout_diff` 给出 layout、log 和 pred/GT 数字。
 - **内置 WM 知识。** chunk-AR、memory 类型、KV memory、exposure bias、revisit 与代理、消融、action following、cache eviction、Harness 上的 RSI。先 `wm_knowledge` / `wm_diagnose`，再谈新结构。
 - **RSI 作用在 harness 层。** skill `wm-rsi` 用 DSH trajectory、fork、Creator 和 `fixtures/sunset` 去演化 skill、`wm.yaml` 和评测配方——不是默默改 backbone。
 - **Skill 管住 agent。** 分诊、知识、RSI、公平消融、revisit。
 - **没有 Harness 也能跑。** 同一套工具是 `node cli.js`，给 CI 和离线演示用，包括 `knowledge` 和 `diagnose`。
 - **起步不需要 GPU。** rollout 分数是纯 JS 亮度 SSIM + MSE。视频要 `ffmpeg`；PNG/PPM 帧目录可以完全离线。
-- **和 Vision Toolkit 组合。** 这里只出数值分数；最差帧交给 `vision_glance` / `vision_pixel_diff` / `vision_crop`。不要重写那一套识图工具。
 
 ## 适合谁用
 
@@ -60,7 +58,6 @@ dsh --profile wm
 | **首尾帧 SSIM 被说成 loop closure** | `wm-revisit` 把它标成帧相似度代理，不是几何 revisit |
 | **agent 对着一帧描述发明 KV 方案** | `wm_knowledge` / `wm_diagnose` 打开 `kv-memory` 和 `chunk-ar`；没有卡片就没有结构 |
 | **希望 harness 自己改进我们怎么 debug WM** | `wm-rsi`：一条声称、一张卡片、一次测量、一处 skill/`wm.yaml` 改动、sunset + 成对门禁 |
-| **最差窗口需要眼睛** | 同一 profile + Vision Toolkit `vision_glance` / `vision_pixel_diff` |
 
 ## 快速开始：三步完成
 
@@ -131,7 +128,7 @@ node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
 
 ## 工具一览
 
-三类，和 Vision Toolkit 的「理解 / 动手 / 验证」同一分法，只是对准世界模型研究：
+三类：
 
 | 类别 | 工具 | 职责 |
 | --- | --- | --- |
@@ -162,7 +159,7 @@ node cli.js diagnose "第一个 chunk 之后后半段崩了"
 
 ### Skills
 
-- **wm-run-triage** — 测量一次 run；可选对最差帧调用 Vision Toolkit
+- **wm-run-triage** — 测量一次 run，失败需要对上号时再打开知识卡片
 - **wm-knowledge** — 先打开卡片再设计
 - **wm-rsi** — Harness trajectory / Creator / fixture 门禁，作用在研究闭环
 - **wm-ablation** — 成对 scene/protocol/seed
@@ -179,7 +176,7 @@ DeepSeek Harness 已经提供 append-only trajectory、fork/replay，以及 Crea
 5. 用 `fixtures/sunset`（必须仍报 late-horizon drop）和用户的成对场景做门禁。
 6. 固化或回滚；保留 session。
 
-这和 Vision Toolkit 的粒度一样：本地可重复的工具 + 知道何时调用的 skill。这里可重复的核心是数字和卡片；skill 禁止无监督的结构 RSI。
+可重复的核心是数字和卡片。skill 禁止无监督的结构 RSI。
 
 ## `wm.yaml`
 
@@ -201,7 +198,6 @@ flowchart LR
   know --> measure[wm_discover / summarize / diff]
   measure --> rsi[wm-rsi 改 skill 和 wm.yaml]
   rsi --> gate[sunset fixture 加成对场景]
-  measure --> eyes[可选 vision_glance]
 ```
 
 项目分三层：
@@ -209,33 +205,6 @@ flowchart LR
 1. **知识** — 设计前必须打开的技术卡片。
 2. **测量** — 读文件系统的工具（不占 GPU，不提交训练）。
 3. **RSI** — 只允许改研究闭环（不是 U-Net），并且要通过 fixture 门禁。
-
-## 和 Vision Toolkit 一起用
-
-DSH-WM 不内置视觉模型。图片问答、定位、裁剪、像素热力图，请用 [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit) 已经发布的模块（[主页](https://agent-vision.anionex.me)）：
-
-```sh
-dsh plugin --profile wm add @anionex/dsh-vision-toolkit
-dsh plugin --profile wm add github:WayneJin0918/dsh-wm
-```
-
-| DSH-WM 找到…… | 交给 Vision Toolkit…… |
-| --- | --- |
-| `wm_rollout_diff` 的最差帧 | `vision_glance` — 这个窗口到底坏在哪？ |
-| 后半段分数掉下去 | `vision_pixel_diff` — 相对 GT 的热力图和重点区域 |
-| 单帧闪了一下 | `vision_crop` — 把坏区域单独裁出来 |
-| 评测界面上的 UI / overlay | `vision_ground` — 原图像素框，再裁剪 |
-
-Toolkit 主页那句话仍然成立：对着图片提问，拿到和当前任务相关的证据，而不是一段通用看图作文。DSH-WM 只决定*哪些帧*值得那一次调用。
-
-```mermaid
-flowchart LR
-  run[Run 目录] --> wm[dsh-wm 工具]
-  wm --> score[SSIM 曲线和假设]
-  score --> frames[最差帧路径]
-  frames --> vtk[vision_glance / vision_pixel_diff]
-  vtk --> answer[数字加上视觉证据]
-```
 
 ## 离线 fixture
 
@@ -302,10 +271,8 @@ npm run check
 
 DSH-WM 建立在两个上游项目之上。感谢作者，以及他们让插件可以复用的格式。
 
-- **[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)**（`dsh`）——本 bundle 安装进去的官方运行时。模型、工具、skill、session 和 agent loop 都是插件；我们加的是研究 profile 层，而不是 fork 仓库。文档：[deepseek.com/harness](https://deepseek.com/harness/en/)。
-- **[DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit)**，作者 [Anionex](https://anionex.me/)，上游为 [agent-vision-toolkit](https://github.com/Anionex/agent-vision-toolkit)——我们组合使用的视觉模块，以及本页所参考的发布结构（双语 README、三步安装、工具表）。项目主页：[agent-vision.anionex.me](https://agent-vision.anionex.me)。
-
-世界模型的知识、测量和过程 RSI 留在本仓库。看懂一帧留在他们那边。
+- **[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)**（`dsh`）——本 bundle 安装进去的官方运行时。文档：[deepseek.com/harness](https://deepseek.com/harness/en/)。
+- **[DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit)**，作者 [Anionex](https://anionex.me/)，以及 [agent-vision-toolkit](https://github.com/Anionex/agent-vision-toolkit)——感谢开源插件，以及本页写作时参考的 [主页](https://agent-vision.anionex.me)。
 
 ## 许可证
 

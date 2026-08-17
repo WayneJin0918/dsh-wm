@@ -87,7 +87,7 @@ export function apply(ctx) {
   ctx.tools.register(defineTool({
     name: 'wm_rollout_diff',
     description:
-      'Compare pred vs GT frame directories or videos with pure-JS luminance SSIM and MSE. Returns mean/min SSIM, a curve, the worst frames, and a one-line diagnosis. Videos need ffmpeg. This release has no LPIPS; compose Vision Toolkit for heatmaps.',
+      'Compare pred vs GT frame directories or videos with pure-JS luminance SSIM and MSE. Returns mean/min SSIM, a curve, the worst frames, and a one-line diagnosis. Videos need ffmpeg. This release has no LPIPS.',
     parameters: {
       pred: { type: 'string', required: true, description: 'Prediction frames directory, image, or video' },
       gt: { type: 'string', required: true, description: 'Ground-truth frames directory, image, or video' },
@@ -122,7 +122,7 @@ export function apply(ctx) {
   ctx.tools.register(defineTool({
     name: 'wm_diagnose',
     description:
-      'Map a world-model symptom (late collapse, forgotten room, ignored action, one-seed win, …) to knowledge cards and the next DSH-WM / Vision Toolkit / RSI step. Use before inventing a new architecture.',
+      'Map a world-model symptom (late collapse, forgotten room, ignored action, one-seed win, …) to knowledge cards and the next DSH-WM / RSI step. Use before inventing a new architecture.',
     parameters: {
       symptom: { type: 'string', required: true, description: 'What you observed in the run or the paper claim' },
     },
