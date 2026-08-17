@@ -17,5 +17,8 @@ summary: Map a visual or log symptom to a knowledge card and a next tool. Do not
 | “Our memory wins” from one seed | `ablation-protocol` | `wm-ablation` |
 | Agent invents a new KV design in chat | `rsi-harness`, `kv-memory` | `wm_knowledge` then `wm-rsi` |
 | Need to *see* the worst frame | (none here) | `wm_inspect` on those indices |
+| “Is Sora a world simulator?” / pretty clip | `pixel-wm`, `wm-routes` | `action-following` then `wm_inspect` |
+| Explorable mesh / Gaussian / occupancy | `display-3d`, `wm-routes` | pose or occupancy, then rendered `wm_inspect` |
+| Dreamer / JEPA / “don’t predict pixels” | `latent-wm`, `wm-routes` | task / latent error; decoded RGB is a look |
 
 Always `wm_discover` before any of the above if the path is a run directory.

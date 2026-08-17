@@ -6,10 +6,10 @@ Broader research toolkit, not only run scoring.
 
 - Tools: `wm_knowledge`, `wm_diagnose`, `wm_inspect`.
 - Skills: `wm-knowledge`, `wm-rsi`.
-- Built-in cards: chunk-AR, memory types, KV memory, exposure bias, revisit, ablation, action following, cache eviction, RSI-in-Harness, diagnosis map.
+- Built-in cards: three routes (`wm-routes`, `display-3d`, `pixel-wm`, `latent-wm`), chunk-AR, memory types, KV memory, exposure bias, revisit, ablation, action following, cache eviction, RSI-in-Harness, diagnosis map.
 - Built-in look-at-frames: `wm_inspect` writes a contact sheet, a luma sketch, and a color/contrast look. Seeing a strip does not require another plugin.
 - README / 中文页按三条工作流并列：知识、RSI、测量（含看图）。
-- README lead is affirmative (what the toolkit is). Vision Toolkit stays in Acknowledgements only.
+- README lead is affirmative (what the toolkit is). Vision Toolkit stays in Acknowledgements only. Route cards follow [Awesome World Models](https://github.com/knightnemo/Awesome-World-Models).
 
 ## 0.1.0 — 2026-08-17
 

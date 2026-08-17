@@ -1,7 +1,7 @@
 ---
 name: wm-knowledge
-description: "Look up built-in world-model technique cards before proposing an architecture, memory recipe, or eval protocol. Covers chunk-AR, KV memory, eviction, exposure bias, revisit, ablation, and RSI-in-Harness."
-whenToUse: "Use when the user asks how to design memory, KV cache, long-horizon training, revisit metrics, or what a failure mode means. Prefer this over inventing a new backbone from a chat."
+description: "Look up built-in world-model technique cards before proposing an architecture, memory recipe, or eval protocol. Covers the three routes (3D display, pixel / video-gen WM, latent prediction), chunk-AR, KV memory, eviction, exposure bias, revisit, ablation, and RSI-in-Harness."
+whenToUse: "Use when the user asks which WM lineage they are in (3D vs pixel vs latent), how to design memory, KV cache, long-horizon training, revisit metrics, or what a failure mode means. Prefer this over inventing a new backbone from a chat."
 ---
 
 # Built-in world-model knowledge
@@ -18,7 +18,9 @@ This bundle ships technique cards. Read them before you design.
 
 ## Catalog (always current via the tool)
 
-`chunk-ar`, `memory-types`, `kv-memory`, `exposure-bias`, `revisit-eval`, `ablation-protocol`, `action-following`, `cache-eviction`, `rsi-harness`, `diagnosis-map`.
+`wm-routes`, `display-3d`, `pixel-wm`, `latent-wm`, `chunk-ar`, `memory-types`, `kv-memory`, `exposure-bias`, `revisit-eval`, `ablation-protocol`, `action-following`, `cache-eviction`, `rsi-harness`, `diagnosis-map`.
+
+Name the route (`wm-routes`) before a backbone. 3D display, pixel / video-gen, and latent prediction are different exams.
 
 ## Pitfalls
 

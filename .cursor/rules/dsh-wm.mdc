@@ -9,3 +9,4 @@ alwaysApply: true
 - README and publish copy stay **affirmative**. Do not add “Not in 0.x”, “明确不做”, “Still out of scope”, or contrastive “we are not X” lists.
 - Measure family is `wm_discover`, `wm_summarize`, `wm_rollout_diff`, `wm_inspect`. After a diff names worst frames, inspect those indices.
 - RSI is harness-layer only (skills, `wm.yaml`, eval notes). Do not silently rewrite training / U-Net.
+- World-model knowledge has **three routes**, always named first: `display-3d` (3D display / mesh / Gaussian / occupancy), `pixel-wm` (video-gen / pixel WM), `latent-wm` (JEPA / Dreamer / RSSM). Overview card is `wm-routes`. Map and tropes follow [Awesome World Models](https://github.com/knightnemo/Awesome-World-Models).

@@ -42,7 +42,7 @@ dsh --profile wm
 - **A run is a directory, not a vibe.** Optional `wm.yaml` declares pred / gt / log / metrics. No manifest → heuristics. Cannot tell → candidates and warnings, never invented paths.
 - **Measure a run when you have one.** `wm_discover` → `wm_summarize` → `wm_rollout_diff` for layout, logs, and pred/GT numbers.
 - **Look at the frames in-repo.** `wm_inspect` samples first / mid / last (or named indices), writes a contact sheet, and returns a luma sketch plus a color/contrast look.
-- **Built-in WM knowledge.** Cards for chunk-AR, memory types, KV memory, exposure bias, revisit vs proxy, ablation, action following, cache eviction, and RSI-in-Harness. `wm_knowledge` / `wm_diagnose` before a new architecture.
+- **Built-in WM knowledge.** Three routes first (3D display, pixel / video-gen WM, latent prediction), then chunk-AR, memory types, KV memory, exposure bias, revisit vs proxy, ablation, action following, cache eviction, and RSI-in-Harness. `wm_knowledge` / `wm_diagnose` before a new architecture.
 - **RSI on the harness layer.** Skill `wm-rsi` uses DSH trajectory, fork, Creator, and `fixtures/sunset` to evolve skills, `wm.yaml`, and eval recipes — not to silently rewrite the backbone.
 - **Skills that keep the agent honest.** Triage, knowledge, RSI, fair ablation, revisit.
 - **Works without Harness.** The same tools run as `node cli.js` for CI and offline demos — including `knowledge` and `diagnose`.
@@ -59,6 +59,7 @@ dsh --profile wm
 | **Ablations mix scenes and seeds** | `wm-ablation` requires paired `(scene, protocol, seed)` and failure rate before any mean |
 | **First-vs-last SSIM is sold as loop closure** | `wm-revisit` labels that number a frame-similarity proxy, not geometric revisit |
 | **The agent invents a KV design from a caption** | `wm_knowledge` / `wm_diagnose` open `kv-memory` and `chunk-ar`; no card, no architecture |
+| **Sora, a Gaussian scene, and Dreamer get one recipe** | `wm-routes` then `pixel-wm` / `display-3d` / `latent-wm` — name the route before the backbone |
 | **We want the harness to improve how we debug WM** | `wm-rsi`: one claim, one card, one measurement, one skill/`wm.yaml` delta, sunset + paired gate |
 
 ## Quick start: three steps
@@ -123,6 +124,7 @@ These two runs claim a memory win — are they paired on scene/protocol/seed?
 | --- | --- |
 | A training or eval run looks wrong | `wm-run-triage` → discover → summarize → diff → inspect |
 | “What kind of memory should we use?” | `wm-knowledge` → `chunk-ar` / `memory-types` / `kv-memory` → then measure |
+| Which WM route is this paper? | `wm-routes` → `display-3d` / `pixel-wm` / `latent-wm` |
 | Late-horizon melt, train loss fine | `wm_diagnose` → `exposure-bias` → scheduled sampling, not a new U-Net |
 | Which cache / memory config won? | `wm-ablation` → paired n and failure rate → mean delta |
 | Did the camera come back? | `wm-revisit` → full-strip diff → first/last only if no poses |
@@ -153,12 +155,14 @@ Rollout scores are **luminance SSIM + MSE**. `wm_inspect` is the built-in way to
 
 ### Knowledge cards
 
-`chunk-ar` · `memory-types` · `kv-memory` · `exposure-bias` · `revisit-eval` · `ablation-protocol` · `action-following` · `cache-eviction` · `rsi-harness` · `diagnosis-map`
+`wm-routes` · `display-3d` · `pixel-wm` · `latent-wm` · `chunk-ar` · `memory-types` · `kv-memory` · `exposure-bias` · `revisit-eval` · `ablation-protocol` · `action-following` · `cache-eviction` · `rsi-harness` · `diagnosis-map`
 
 ```sh
 node cli.js knowledge
+node cli.js knowledge --id wm-routes
 node cli.js knowledge kv memory
 node cli.js knowledge --id rsi-harness
+node cli.js diagnose "is Sora a world simulator"
 node cli.js diagnose "late collapse after the first chunk"
 ```
 
@@ -270,10 +274,11 @@ npm run check
 
 ## Acknowledgements
 
-DSH-WM stands on two upstream projects. Thank you to their authors and the plugin format they made reusable.
+DSH-WM stands on these upstream projects. Thank you to their authors and the maps they made reusable.
 
 - **[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)** (`dsh`) — the official runtime this bundle installs into. Docs: [deepseek.com/harness](https://deepseek.com/harness/en/).
 - **[DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit)** by [Anionex](https://anionex.me/), with [agent-vision-toolkit](https://github.com/Anionex/agent-vision-toolkit) — thanks for the open plugin and the [homepage](https://agent-vision.anionex.me) this README learned from.
+- **[Awesome World Models](https://github.com/knightnemo/Awesome-World-Models)** — the map of 3D / pixel / latent lineages the built-in route cards follow.
 
 ## License
 

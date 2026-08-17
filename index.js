@@ -142,7 +142,7 @@ export function apply(ctx) {
   ctx.tools.register(defineTool({
     name: 'wm_knowledge',
     description:
-      'Look up built-in world-model technique cards: chunk-AR, memory types, KV memory, exposure bias, revisit eval, ablation, action following, cache eviction, RSI-in-Harness. Empty query lists the catalog; id opens one card.',
+      'Look up built-in world-model technique cards: the three routes (3D display, pixel / video-gen WM, latent prediction), chunk-AR, memory types, KV memory, exposure bias, revisit eval, ablation, action following, cache eviction, RSI-in-Harness. Empty query lists the catalog; id opens one card.',
     parameters: {
       query: { type: 'string', description: 'Free-text search (memory, revisit, RSI, KV, …)' },
       id: { type: 'string', description: 'Exact card id, e.g. chunk-ar, rsi-harness' },

@@ -42,7 +42,7 @@ dsh --profile wm
 - **一次 run 是一个目录，不是感觉。** 可选 `wm.yaml` 声明 pred / gt / log / metrics；没有清单就启发式；认不出就返回候选和警告，不编路径。
 - **有 run 就测量。** `wm_discover` → `wm_summarize` → `wm_rollout_diff` 给出 layout、log 和 pred/GT 数字。
 - **看图就在本仓库里。** `wm_inspect` 抽 first / mid / last（或指定下标），写出接触图，并返回亮度草图和颜色 / 对比度描述。
-- **内置 WM 知识。** chunk-AR、memory 类型、KV memory、exposure bias、revisit 与代理、消融、action following、cache eviction、Harness 上的 RSI。先 `wm_knowledge` / `wm_diagnose`，再谈新结构。
+- **内置 WM 知识。** 先认三条路线（3D 显示、Pixel / Video Gen WM、Latent Prediction），再是 chunk-AR、memory 类型、KV memory、exposure bias、revisit 与代理、消融、action following、cache eviction、Harness 上的 RSI。先 `wm_knowledge` / `wm_diagnose`，再谈新结构。
 - **RSI 作用在 harness 层。** skill `wm-rsi` 用 DSH trajectory、fork、Creator 和 `fixtures/sunset` 去演化 skill、`wm.yaml` 和评测配方——不是默默改 backbone。
 - **Skill 管住 agent。** 分诊、知识、RSI、公平消融、revisit。
 - **没有 Harness 也能跑。** 同一套工具是 `node cli.js`，给 CI 和离线演示用，包括 `knowledge` 和 `diagnose`。
@@ -59,6 +59,7 @@ dsh --profile wm
 | **消融把场景和 seed 混在一起** | `wm-ablation` 要求成对 `(scene, protocol, seed)`，先报 n 和 failure 率再报均值 |
 | **首尾帧 SSIM 被说成 loop closure** | `wm-revisit` 把它标成帧相似度代理，不是几何 revisit |
 | **agent 对着一帧描述发明 KV 方案** | `wm_knowledge` / `wm_diagnose` 打开 `kv-memory` 和 `chunk-ar`；没有卡片就没有结构 |
+| **把 Sora、Gaussian 场景和 Dreamer 写成一套配方** | 先 `wm-routes`，再 `pixel-wm` / `display-3d` / `latent-wm`——认路线再谈 backbone |
 | **希望 harness 自己改进我们怎么 debug WM** | `wm-rsi`：一条声称、一张卡片、一次测量、一处 skill/`wm.yaml` 改动、sunset + 成对门禁 |
 
 ## 快速开始：三步完成
@@ -123,6 +124,7 @@ node cli.js inspect fixtures/sunset --indices first,mid,last
 | --- | --- |
 | 训练或评测 run 看起来不对 | `wm-run-triage` → discover → summarize → diff → inspect |
 | 「该用哪种 memory？」 | `wm-knowledge` → `chunk-ar` / `memory-types` / `kv-memory` → 再测量 |
+| 这篇论文是哪条 WM 路线？ | `wm-routes` → `display-3d` / `pixel-wm` / `latent-wm` |
 | 后半段融化，train loss 还很健康 | `wm_diagnose` → `exposure-bias` → scheduled sampling，不是新 U-Net |
 | 哪个 cache / memory 配置赢了 | `wm-ablation` → 成对 n 和 failure 率 → 均值差 |
 | 相机有没有回来 | `wm-revisit` → 整段 diff → 没有 pose 才用首尾帧 |
@@ -153,12 +155,14 @@ rollout 分数是 **亮度 SSIM + MSE**。看条带用内置的 `wm_inspect`。
 
 ### 知识卡片
 
-`chunk-ar` · `memory-types` · `kv-memory` · `exposure-bias` · `revisit-eval` · `ablation-protocol` · `action-following` · `cache-eviction` · `rsi-harness` · `diagnosis-map`
+`wm-routes` · `display-3d` · `pixel-wm` · `latent-wm` · `chunk-ar` · `memory-types` · `kv-memory` · `exposure-bias` · `revisit-eval` · `ablation-protocol` · `action-following` · `cache-eviction` · `rsi-harness` · `diagnosis-map`
 
 ```sh
 node cli.js knowledge
+node cli.js knowledge --id wm-routes
 node cli.js knowledge kv memory
 node cli.js knowledge --id rsi-harness
+node cli.js diagnose "Sora 算世界模型吗"
 node cli.js diagnose "第一个 chunk 之后后半段崩了"
 ```
 
@@ -270,10 +274,11 @@ npm run check
 
 ## 致谢
 
-DSH-WM 建立在两个上游项目之上。感谢作者，以及他们让插件可以复用的格式。
+DSH-WM 建立在这些上游之上。感谢作者，以及他们让插件和地图可以复用的格式。
 
 - **[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)**（`dsh`）——本 bundle 安装进去的官方运行时。文档：[deepseek.com/harness](https://deepseek.com/harness/en/)。
 - **[DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit)**，作者 [Anionex](https://anionex.me/)，以及 [agent-vision-toolkit](https://github.com/Anionex/agent-vision-toolkit)——感谢开源插件，以及本页写作时参考的 [主页](https://agent-vision.anionex.me)。
+- **[Awesome World Models](https://github.com/knightnemo/Awesome-World-Models)**——内置三条路线卡片所对照的 3D / pixel / latent 地图。
 
 ## 许可证
 

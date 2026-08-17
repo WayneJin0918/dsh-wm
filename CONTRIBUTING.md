@@ -13,7 +13,7 @@ npm run check
 
 ## Scope (0.2.0)
 
-Filesystem measure tools, built-in frame inspect (`wm_inspect` contact sheet + luma sketch), `wm.yaml`, knowledge cards, diagnosis, and harness-layer RSI skills.
+Filesystem measure tools, built-in frame inspect (`wm_inspect` contact sheet + luma sketch), `wm.yaml`, knowledge cards (three routes first: `display-3d`, `pixel-wm`, `latent-wm`), diagnosis, and harness-layer RSI skills.
 
 Match the publishing layout of [dsh-vision-toolkit](https://github.com/Anionex/dsh-vision-toolkit): bilingual README, toolbox families (measure / know / iterate), a three-step quick start, and a changelog entry. If you add a tool or card, update the GitHub repo description only when the one-line product pitch changes.
 
