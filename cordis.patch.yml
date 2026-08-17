@@ -1,0 +1,5 @@
+# dsh-wm bundle layer.
+# Installed by: dsh plugin --profile wm add github:<you>/dsh-wm
+- insert:
+    - id: dsh-wm
+      name: dsh-wm

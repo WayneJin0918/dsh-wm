@@ -1,0 +1,9 @@
+{
+  "name": "sunset-revisit",
+  "mean_ssim": 0.71,
+  "min_ssim": 0.42,
+  "action_acc": 0.754,
+  "revisit_ssim": 0.31,
+  "flicker": 0.048,
+  "failure": false
+}

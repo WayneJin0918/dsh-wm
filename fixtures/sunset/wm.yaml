@@ -1,0 +1,5 @@
+name: sunset-revisit
+pred: pred
+gt: gt
+log: logs/train.log
+metrics: metrics.json

@@ -1,0 +1,14 @@
+DreamX-like smoke run — synthetic fixture, not a real trainer
+[step 0] loss=0.4200 lr=1e-4 mem=sparse
+[step 20] loss=0.4040 lr=1e-4 mem=sparse
+[step 40] loss=0.3880 lr=1e-4 mem=sparse
+[step 60] loss=0.3720 lr=1e-4 mem=sparse
+[step 80] loss=0.3560 lr=1e-4 mem=sparse
+[step 100] loss=0.3400 lr=1e-4 mem=sparse
+[step 120] loss=0.3240 lr=1e-4 mem=sparse
+[step 140] loss=0.3080 lr=1e-4 mem=sparse
+[step 160] loss=0.3520 lr=1e-4 mem=sparse
+[step 180] loss=0.3360 lr=1e-4 mem=sparse
+[step 200] loss=0.3200 lr=1e-4 mem=sparse
+[step 200] eval mean_ssim=0.71 revisit_ssim=0.31 flicker=0.048
+done

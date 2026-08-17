@@ -1,0 +1,70 @@
+{
+  "name": "dsh-wm",
+  "version": "0.1.0",
+  "description": "World-model research tools for DeepSeek Harness: discover a run, summarize logs/metrics, and diff pred vs GT with pure-JS SSIM.",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "dsh-wm": "./bin/wm.js"
+  },
+  "files": [
+    "index.js",
+    "cli.js",
+    "bin",
+    "cordis.patch.yml",
+    "lib",
+    "skills",
+    "fixtures",
+    "README.md",
+    "LICENSE",
+    "README.zh.md",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "fixtures": "node scripts/generate-fixtures.js",
+    "check": "node cli.js discover fixtures/sunset && node cli.js summarize fixtures/sunset && node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-skill": "^0.1.0-rc.6"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-skill": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "world-model",
+    "ssim",
+    "rollout",
+    "research"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WayneJin0918/dsh-wm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WayneJin0918/dsh-wm/issues"
+  },
+  "homepage": "https://github.com/WayneJin0918/dsh-wm#readme"
+}
