@@ -17,9 +17,15 @@ test('cordis.patch.yml inserts this package', () => {
   assert.match(text, /id:\s*dsh-wm/)
 })
 
-test('three skills ship with name and description', () => {
+test('skills ship with name and description', () => {
   const names = readdirSync(new URL('../skills', import.meta.url))
-  assert.deepEqual(names.sort(), ['wm-ablation', 'wm-revisit', 'wm-run-triage'])
+  assert.deepEqual(names.sort(), [
+    'wm-ablation',
+    'wm-knowledge',
+    'wm-revisit',
+    'wm-rsi',
+    'wm-run-triage',
+  ])
   for (const name of names) {
     const text = readFileSync(new URL(`../skills/${name}/SKILL.md`, import.meta.url), 'utf8')
     assert.match(text, /^---\n/)

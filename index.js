@@ -1,9 +1,10 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { renderDiff, renderDiscover, renderSummarize } from './lib/card.js'
+import { renderDiagnose, renderDiff, renderDiscover, renderKnowledge, renderSummarize } from './lib/card.js'
 import { discover } from './lib/discover.js'
 import { rolloutDiff } from './lib/diff.js'
+import { diagnoseProblem, lookupKnowledge } from './lib/knowledge.js'
 import { summarize } from './lib/summarize.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -98,6 +99,39 @@ export function apply(ctx) {
     },
     async execute(args) {
       return rolloutDiff(args.pred, args.gt, { maxFrames: args.max_frames ?? 64 })
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'wm_knowledge',
+    description:
+      'Look up built-in world-model technique cards: chunk-AR, memory types, KV memory, exposure bias, revisit eval, ablation, action following, cache eviction, RSI-in-Harness. Empty query lists the catalog; id opens one card.',
+    parameters: {
+      query: { type: 'string', description: 'Free-text search (memory, revisit, RSI, KV, …)' },
+      id: { type: 'string', description: 'Exact card id, e.g. chunk-ar, rsi-harness' },
+    },
+    output: {
+      schema: { type: 'object' },
+      render: (_args, value) => [{ type: 'text', text: renderKnowledge(value) }],
+    },
+    async execute(args) {
+      return lookupKnowledge({ query: args.query, id: args.id })
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'wm_diagnose',
+    description:
+      'Map a world-model symptom (late collapse, forgotten room, ignored action, one-seed win, …) to knowledge cards and the next DSH-WM / Vision Toolkit / RSI step. Use before inventing a new architecture.',
+    parameters: {
+      symptom: { type: 'string', required: true, description: 'What you observed in the run or the paper claim' },
+    },
+    output: {
+      schema: { type: 'object' },
+      render: (_args, value) => [{ type: 'text', text: renderDiagnose(value) }],
+    },
+    async execute(args) {
+      return diagnoseProblem(args.symptom)
     },
   }))
 

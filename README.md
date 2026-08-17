@@ -4,17 +4,17 @@
 [![DSH](https://img.shields.io/badge/DSH-Web%20%2B%20Headless%20%2B%20wm-5B4CF0?style=flat-square)](cordis.patch.yml)
 [![Node](https://img.shields.io/badge/node-%3E%3D18-0B7285?style=flat-square)](package.json)
 
-**A world-model research assistant for DeepSeek Harness: discover a run, summarize the log, and diff pred vs GT — one bundle and three skills.**
+**A world-model research toolkit for DeepSeek Harness: measure runs, look up built-in WM technique knowledge, and run an RSI loop on the research process — not a three-command scorecard.**
 
-Point the agent at a run directory and ask what happened, where the rollout drifts, and what to ablate next.
+Ask why a return trip forgot the room, whether sparse memory is allowed to beat FIFO, or how Creator mode should iterate a skill — and get a card, a measurement, and a rollback, not a new U-Net from chat.
 
-🚀 Install with one command | Score a run without a GPU | Compose with Vision Toolkit when you need eyes
+🚀 Install with one command | Built-in WM knowledge | RSI on skills and evals | Compose with Vision Toolkit when you need eyes
 
 🌐 **English** | [中文](README.zh.md)
 
 If you train or evaluate world models (video / action-conditioned generation, memory, revisit) inside DeepSeek Harness, you may have run into the same problems: the model cannot see a rollout strip, a generic caption misses the failure mode, two runs are compared without a shared seed, and “looks close” has no number.
 
-This package is a DeepSeek Harness **profile bundle**, not a fork. It scores and triages **runs**. When the agent also needs to *look* at a frame — “what broke in this worst window?” — install [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit) beside it and reuse its vision modules (`vision_glance`, `vision_pixel_diff`, `vision_crop`). See the [toolkit homepage](https://agent-vision.anionex.me) for that layer.
+This package is a DeepSeek Harness **profile bundle**, not a fork. It is closer to [DSH Vision Toolkit](https://github.com/Anionex/dsh-vision-toolkit) in *scope* (knowledge + skills + composable tools) than to a one-off eval script. Scoring a run is one workflow. The rest is: built-in technique cards, symptom → next-step diagnosis, and RSI that uses Harness trajectories / Creator / fixtures to improve the **research loop**. When a frame must be *seen*, reuse the toolkit’s vision modules ([homepage](https://agent-vision.anionex.me)).
 
 ```sh
 dsh plugin --profile wm add github:WayneJin0918/dsh-wm
@@ -25,8 +25,10 @@ dsh --profile wm
 
 - **One command to install.** Official bundle format, pure JavaScript, no `prepare` / `allowBuilds`.
 - **A run is a directory, not a vibe.** Optional `wm.yaml` declares pred / gt / log / metrics. No manifest → heuristics. Cannot tell → candidates and warnings, never invented paths.
-- **Three tools, one loop.** `wm_discover` → `wm_summarize` → `wm_rollout_diff`.
-- **Skills that keep the agent honest.** Triage, fair ablation, and revisit checks are installed into the Harness skill catalog.
+- **Measure when you have a run.** `wm_discover` → `wm_summarize` → `wm_rollout_diff` is the numeric loop, not the whole product.
+- **Built-in WM knowledge.** Cards for chunk-AR, memory types, KV memory, exposure bias, revisit vs proxy, ablation, action following, cache eviction, and RSI-in-Harness. `wm_knowledge` / `wm_diagnose` before a new architecture.
+- **RSI on the harness layer.** Skill `wm-rsi` uses DSH trajectory, fork, Creator, and `fixtures/sunset` to evolve skills, `wm.yaml`, and eval recipes — not to silently rewrite the backbone.
+- **Skills that keep the agent honest.** Triage, knowledge, RSI, fair ablation, revisit.
 - **Works without Harness.** The same tools run as `node cli.js` for CI and offline demos.
 - **No GPU on day one.** Luminance SSIM + MSE in pure JS. Videos need `ffmpeg`; PNG/PPM frame folders do not.
 - **Compose with Vision Toolkit.** Keep numeric rollout scores here; hand worst frames to `vision_glance` / `vision_pixel_diff` / `vision_crop` when a text model needs eyes. Do not reimplement those tools.
@@ -40,6 +42,9 @@ dsh --profile wm
 | **“Looks worse” is not a metric** | `wm_rollout_diff` returns mean/min SSIM, a curve, worst frames, and a one-line diagnosis |
 | **Ablations mix scenes and seeds** | `wm-ablation` requires paired `(scene, protocol, seed)` and failure rate before any mean |
 | **First-vs-last SSIM is sold as loop closure** | `wm-revisit` labels that number a frame-similarity proxy, not geometric revisit |
+| **The agent invents a KV design from a caption** | `wm_knowledge` / `wm_diagnose` open `kv-memory` and `chunk-ar`; no card, no architecture |
+| **We want the harness to improve how we debug WM** | `wm-rsi`: one claim, one card, one measurement, one skill/`wm.yaml` delta, sunset + paired gate |
+| **Need eyes on the worst window** | Same profile + Vision Toolkit `vision_glance` / `vision_pixel_diff` |
 
 ## Quick start: three steps
 
@@ -89,7 +94,8 @@ Put a `wm.yaml` in the run root (or rely on heuristics), then ask:
 
 ```text
 Triage fixtures/sunset. What failed, and is it late-horizon?
-Diff pred vs GT and name the worst frames.
+The return trip forgot the room — which memory recipe is even allowed?
+Use Harness RSI to tighten the revisit skill; keep sunset as a regression gate.
 These two runs claim a memory win — are they paired on scene/protocol/seed?
 ```
 
@@ -98,9 +104,12 @@ These two runs claim a memory win — are they paired on scene/protocol/seed?
 | Task | Recommended workflow |
 | --- | --- |
 | A training or eval run looks wrong | `wm-run-triage` → discover → summarize → diff |
+| “What kind of memory should we use?” | `wm-knowledge` → `chunk-ar` / `memory-types` / `kv-memory` → then measure |
+| Late-horizon melt, train loss fine | `wm_diagnose` → `exposure-bias` → scheduled sampling, not a new U-Net |
 | Which cache / memory config won? | `wm-ablation` → paired n and failure rate → mean delta |
 | Did the camera come back? | `wm-revisit` → full-strip diff → first/last only if no poses |
-| Offline CI / no API key | `node cli.js` on the same paths |
+| Improve the *research loop* itself | `wm-rsi` → Creator / trajectory → one skill or `wm.yaml` change → sunset gate |
+| Offline CI / no API key | `node cli.js knowledge`, `diagnose`, `discover`, `diff` |
 
 ## Toolbox
 
@@ -109,8 +118,42 @@ These two runs claim a memory win — are they paired on scene/protocol/seed?
 | `wm_discover` | “What is in this run directory?” | layout, pred/gt/log/metrics, frame counts, warnings |
 | `wm_summarize` | “Did training actually finish, and what should I test?” | last loss / NaN / early-stop, metric keys, 3 hypotheses |
 | `wm_rollout_diff` | “Where does pred drift from GT?” | mean/min SSIM, curve, worst 3 frames, diagnosis |
+| `wm_knowledge` | “What is chunk-AR / KV memory / RSI in Harness?” | catalog or a full technique card |
+| `wm_diagnose` | “It forgets when we come back — now what?” | card ids + next tool / skill |
 
 Day-1 metrics are **luminance SSIM + MSE**. There is no LPIPS / RAFT yet; a later `--backend lpips` can wrap a local Python env.
+
+### Knowledge cards
+
+`chunk-ar` · `memory-types` · `kv-memory` · `exposure-bias` · `revisit-eval` · `ablation-protocol` · `action-following` · `cache-eviction` · `rsi-harness` · `diagnosis-map`
+
+```sh
+node cli.js knowledge
+node cli.js knowledge kv memory
+node cli.js knowledge --id rsi-harness
+node cli.js diagnose "late collapse after the first chunk"
+```
+
+### Skills
+
+- **wm-run-triage** — measure a run; optional Vision Toolkit on worst frames
+- **wm-knowledge** — open a card before designing
+- **wm-rsi** — Harness trajectory / Creator / fixture gate on the research loop
+- **wm-ablation** — paired scene/protocol/seed
+- **wm-revisit** — geometric vs proxy
+
+## RSI with Harness
+
+DeepSeek Harness already gives you append-only trajectories, fork/replay, and Creator mode (inspect the live plugin tree). DSH-WM points that at world-model *process*:
+
+1. Write a falsifiable claim.
+2. Open `wm_knowledge` (`rsi-harness` + the technique).
+3. Measure (`wm_summarize` / `wm_rollout_diff`).
+4. Change **one** skill, `wm.yaml` field, or eval note — not the U-Net.
+5. Gate on `fixtures/sunset` (must still report late-horizon drop) and a paired user scene.
+6. Solidify or roll back; keep the session.
+
+That is the same grain Vision Toolkit uses for visual work: local deterministic tools + a skill that knows when to call them. Here the deterministic core is numbers + cards; the skill forbids unsupervised architecture RSI.
 
 ## `wm.yaml`
 

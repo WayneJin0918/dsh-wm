@@ -1,7 +1,7 @@
 {
   "name": "dsh-wm",
-  "version": "0.1.0",
-  "description": "World-model research tools for DeepSeek Harness: discover a run, summarize logs/metrics, and diff pred vs GT with pure-JS SSIM.",
+  "version": "0.2.0",
+  "description": "World-model research toolkit for DeepSeek Harness: run metrics, built-in WM knowledge, and RSI on the research loop.",
   "type": "module",
   "main": "index.js",
   "bin": {
@@ -18,7 +18,8 @@
     "README.md",
     "LICENSE",
     "README.zh.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "knowledge"
   ],
   "exports": {
     ".": "./index.js",
@@ -57,7 +58,9 @@
     "world-model",
     "ssim",
     "rollout",
-    "research"
+    "research",
+    "rsi",
+    "knowledge"
   ],
   "repository": {
     "type": "git",

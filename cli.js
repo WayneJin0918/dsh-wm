@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { resolve } from 'node:path'
-import { renderDiff, renderDiscover, renderSummarize } from './lib/card.js'
+import { renderDiagnose, renderDiff, renderDiscover, renderKnowledge, renderSummarize } from './lib/card.js'
 import { discover } from './lib/discover.js'
 import { rolloutDiff } from './lib/diff.js'
+import { diagnoseProblem, lookupKnowledge } from './lib/knowledge.js'
 import { summarize } from './lib/summarize.js'
 
 function flag(args, name, fallback) {
@@ -12,12 +13,15 @@ function flag(args, name, fallback) {
 }
 
 function usage() {
-  return `dsh-wm — world-model run tools (no DeepSeek Harness required)
+  return `dsh-wm — world-model research tools (no DeepSeek Harness required)
 
 Usage:
   node cli.js discover <run-dir>
   node cli.js summarize <run-dir> [--tail 80]
   node cli.js diff --pred <path> --gt <path> [--max-frames 64]
+  node cli.js knowledge [query]
+  node cli.js knowledge --id chunk-ar
+  node cli.js diagnose <symptom...>
 `
 }
 
@@ -51,6 +55,17 @@ if (cmd === 'discover') {
   }
   const maxFrames = Number(flag(rest, '--max-frames', 64))
   process.stdout.write(`${renderDiff(rolloutDiff(resolve(pred), resolve(gt), { maxFrames }))}\n`)
+} else if (cmd === 'knowledge') {
+  const id = flag(rest, '--id')
+  const query = rest.filter((a) => a !== '--id' && a !== id).join(' ')
+  process.stdout.write(`${renderKnowledge(lookupKnowledge({ query, id }))}\n`)
+} else if (cmd === 'diagnose') {
+  const symptom = rest.join(' ')
+  if (!symptom) {
+    process.stderr.write(usage())
+    process.exit(1)
+  }
+  process.stdout.write(`${renderDiagnose(diagnoseProblem(symptom))}\n`)
 } else {
   process.stderr.write(usage())
   process.exit(1)
