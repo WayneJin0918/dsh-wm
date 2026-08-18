@@ -19,16 +19,13 @@ dsh plugin --profile wm add github:WayneJin0918/dsh-wm
 dsh --profile wm
 ```
 
-然后试一句：*分诊 `fixtures/sunset`。看 first / mid / last。打开对照页。是后半段崩了吗？*
-
-![sunset 接触图：pred 在上，GT 在下，最后一格 pred 被抹蓝](docs/sunset-inspect.png)
+然后试一句：*分诊 `fixtures/sunset`。看 first / mid / last。是后半段崩了吗？*
 
 **运行时：** [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness)
 
 目录
 
 - [30 秒就能玩](#30-秒就能玩)
-- [看这抹蓝](#看这抹蓝)
 - [亮点](#亮点)
 - [三条路线](#三条路线)
 - [适合谁用](#适合谁用)
@@ -50,27 +47,7 @@ node cli.js diagnose "Sora 算世界模型吗"
 node cli.js knowledge --id wm-routes
 ```
 
-## 看这抹蓝
-
-sunset 是 8 帧玩具：前半 pred 还暖，后半被涂成冷蓝，GT 里太阳还在走。橙条 = pred，青条 = GT，红 = 差异 / 最差 SSIM。
-
-![wm_inspect 接触图：pred 叠在 GT 上，最后一格 pred 变冷](docs/sunset-inspect.png)
-
-*first / mid / last。上行 pred，下行 GT。最后一格 pred 就是那一抹蓝。*
-
-![八帧 SSIM：青色还贴着，红色是后半段坑](docs/sunset-ssim.png)
-
-*`wm_rollout_diff` 点名 4–6 帧。青柱还贴着 GT，红柱是 late-horizon 的洞。*
-
-![first / mid / last 的 pred | GT | 热力](docs/sunset-story.png)
-
-*三列是 pred | GT | |pred−GT|。热力在抹蓝之前是黑的。*
-
-![整条 wm_view 对照带](docs/sunset-compare.png)
-
-*可以自己拖的 `wm_view` 条带。本地打开 [docs/sunset-view.html](docs/sunset-view.html) 看并排 / 滑杆 / 热力，以及 `follow-sun` HUD（0–3 followed，4–7 dropped）。*
-
-终端里的 `wm_inspect` 亮度草图：
+`wm_inspect` 会打出终端里就能读的亮度草图：
 
 ```text
 pred #0  luma=148.7  low contrast, warm / orange
@@ -81,6 +58,8 @@ pred #7  luma=62    near-uniform, cool / blue
 gt   #7  luma=160.4  low contrast, warm / orange
     ***#############
 ```
+
+同一条带上的 `wm_rollout_diff` 会报后半段 SSIM 下降，并把 4–6 帧标成最差窗口。需要自己拖 pred vs GT 时用 `wm_view`。先看、再打分、再打开一张卡片。
 
 ## 亮点
 

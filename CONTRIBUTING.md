@@ -11,13 +11,6 @@ npm run check
 
 `check` must cover **know + measure + look**: `knowledge`, `diagnose`, sunset discover/summarize/diff, `inspect`, and `view`.
 
-Regenerate README art after changing the sunset painter:
-
-```sh
-node scripts/generate-fixtures.js
-node scripts/generate-docs.js
-```
-
 ## Scope (0.3.0)
 
 Filesystem measure tools, built-in frame inspect (`wm_inspect` contact sheet + luma sketch), compare page (`wm_view` side-by-side / swipe / heat + action HUD), `wm.yaml`, knowledge cards (three routes first: `display-3d`, `pixel-wm`, `latent-wm`), diagnosis, and harness-layer RSI skills.

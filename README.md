@@ -19,9 +19,7 @@ dsh plugin --profile wm add github:WayneJin0918/dsh-wm
 dsh --profile wm
 ```
 
-Then try: *Triage `fixtures/sunset`. Look at first, mid, last. Is this late-horizon? Open the compare page.*
-
-![sunset inspect — pred over GT, last tile wiped blue](docs/sunset-inspect.png)
+Then try: *Triage `fixtures/sunset`. Look at first, mid, last. Is this late-horizon?*
 
 DeepSeek’s product mainline can skip world models. Harness is still the research OS — this plugin is the WM lab on top of it.
 
@@ -31,7 +29,6 @@ DeepSeek’s product mainline can skip world models. Harness is still the resear
 <summary>Table of contents</summary>
 
 - [Play it in 30 seconds](#play-it-in-30-seconds)
-- [Watch the wipe](#watch-the-wipe)
 - [Highlights](#highlights)
 - [Three routes](#three-routes)
 - [Who it is for](#who-it-is-for)
@@ -55,27 +52,7 @@ node cli.js diagnose "is Sora a world simulator"
 node cli.js knowledge --id wm-routes
 ```
 
-## Watch the wipe
-
-Sunset is an 8-frame toy: pred stays warm through the first half, then the second half is painted cold blue while GT keeps the sun. Orange rail = pred, teal = GT, red = abs-diff / worst SSIM.
-
-![wm_inspect contact sheet — pred over GT, last pred goes cold](docs/sunset-inspect.png)
-
-*first / mid / last. Top row pred, bottom row GT. The last pred tile is the wipe.*
-
-![SSIM over eight frames — teal holds, red is the late drop](docs/sunset-ssim.png)
-
-*`wm_rollout_diff` names frames 4–6. Teal bars still match; red bars are the late-horizon hole.*
-
-![first, mid, last as pred | GT | heat](docs/sunset-story.png)
-
-*Same three beats as columns pred | GT | |pred−GT|. Heat stays black until the sun is gone from pred.*
-
-![full wm_view compare strip](docs/sunset-compare.png)
-
-*The `wm_view` strip you can scrub. Open [docs/sunset-view.html](docs/sunset-view.html) locally for side-by-side, swipe, heat, and the `follow-sun` HUD (followed on 0–3, dropped on 4–7).*
-
-Terminal companion from `wm_inspect`:
+`wm_inspect` prints a luma sketch you can read in a terminal:
 
 ```text
 pred #0  luma=148.7  low contrast, warm / orange
@@ -86,6 +63,8 @@ pred #7  luma=62    near-uniform, cool / blue
 gt   #7  luma=160.4  low contrast, warm / orange
     ***#############
 ```
+
+`wm_rollout_diff` on the same strip reports a second-half SSIM drop and names frames 4–6 as the worst window. `wm_view` writes a local compare page if you want to scrub pred vs GT. Look, score, then open a card.
 
 ## Highlights
 
