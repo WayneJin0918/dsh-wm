@@ -1,7 +1,7 @@
 {
   "name": "dsh-wm",
-  "version": "0.2.0",
-  "description": "Playable world-model toolkit for DeepSeek Harness: look at frames, name the 3D / pixel / latent route, measure a run, and RSI the research loop.",
+  "version": "0.3.0",
+  "description": "Playable world-model toolkit for DeepSeek Harness: look at frames, compare pred vs GT, watch the action track, name the 3D / pixel / latent route, and RSI the research loop.",
   "type": "module",
   "main": "index.js",
   "bin": {
@@ -28,7 +28,8 @@
   "scripts": {
     "test": "node --test test/*.test.js",
     "fixtures": "node scripts/generate-fixtures.js",
-    "check": "node cli.js knowledge --id rsi-harness && node cli.js diagnose \"late collapse after the first chunk\" && node cli.js discover fixtures/sunset && node cli.js summarize fixtures/sunset && node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt && node cli.js inspect fixtures/sunset --indices first,mid,last"
+    "docs": "node scripts/generate-docs.js",
+    "check": "node cli.js knowledge --id rsi-harness && node cli.js diagnose \"late collapse after the first chunk\" && node cli.js discover fixtures/sunset && node cli.js summarize fixtures/sunset && node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt && node cli.js inspect fixtures/sunset --indices first,mid,last && node cli.js view fixtures/sunset"
   },
   "dsh": {
     "bundle": {

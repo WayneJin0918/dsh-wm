@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import { resolve } from 'node:path'
-import { renderDiagnose, renderDiff, renderDiscover, renderInspect, renderKnowledge, renderSummarize } from './lib/card.js'
+import { renderDiagnose, renderDiff, renderDiscover, renderInspect, renderKnowledge, renderSummarize, renderView } from './lib/card.js'
 import { discover } from './lib/discover.js'
 import { rolloutDiff } from './lib/diff.js'
 import { inspectFrames } from './lib/inspect.js'
+import { writeViewPage } from './lib/view.js'
 import { diagnoseProblem, lookupKnowledge } from './lib/knowledge.js'
 import { summarize } from './lib/summarize.js'
 
@@ -18,6 +19,7 @@ function usage() {
 
 Try the sunset playground (no GPU):
   node cli.js inspect fixtures/sunset --indices first,mid,last
+  node cli.js view fixtures/sunset
   node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
   node cli.js diagnose "is Sora a world simulator"
   node cli.js knowledge --id wm-routes
@@ -30,6 +32,7 @@ Usage:
   node cli.js knowledge --id wm-routes
   node cli.js diagnose <symptom...>
   node cli.js inspect <path> [--indices first,mid,last] [--pair <gt>]
+  node cli.js view <run-dir> [--out report.html] [--pair <gt>] [--max-frames 64]
 `
 }
 
@@ -83,6 +86,16 @@ if (cmd === 'discover') {
   const indices = flag(rest, '--indices')
   const pair = flag(rest, '--pair')
   process.stdout.write(`${renderInspect(inspectFrames(resolve(path), { indices, pair }))}\n`)
+} else if (cmd === 'view') {
+  const path = rest.find((a) => !a.startsWith('--'))
+  if (!path) {
+    process.stderr.write(usage())
+    process.exit(1)
+  }
+  const pair = flag(rest, '--pair')
+  const out = flag(rest, '--out')
+  const maxFrames = Number(flag(rest, '--max-frames', 64))
+  process.stdout.write(`${renderView(writeViewPage(resolve(path), { pair, out, maxFrames }))}\n`)
 } else {
   process.stderr.write(usage())
   process.exit(1)

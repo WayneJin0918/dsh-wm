@@ -100,9 +100,23 @@ writeFileSync(
     'gt: gt',
     'log: logs/train.log',
     'metrics: metrics.json',
+    'actions: actions.json',
     '',
   ].join('\n'),
 )
+
+const actions = []
+for (let i = 0; i < N; i++) {
+  actions.push({
+    index: i,
+    name: 'follow-sun',
+    dx: 1,
+    dy: 0.15,
+    yaw: 8 + i * 7,
+    followed: i < 4,
+  })
+}
+writeFileSync(join(root, 'actions.json'), `${JSON.stringify(actions, null, 2)}\n`)
 
 writeFileSync(
   join(root, 'metrics.json'),

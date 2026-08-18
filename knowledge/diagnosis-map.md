@@ -16,7 +16,7 @@ summary: Map a visual or log symptom to a knowledge card and a next tool. Do not
 | Train loss healthy, infer looks drunk | `exposure-bias` | compare GT-context vs pred-context if you can |
 | “Our memory wins” from one seed | `ablation-protocol` | `wm-ablation` |
 | Agent invents a new KV design in chat | `rsi-harness`, `kv-memory` | `wm_knowledge` then `wm-rsi` |
-| Need to *see* the worst frame | (none here) | `wm_inspect` on those indices |
+| Need to *see* the worst frame | (none here) | `wm_inspect` on those indices; `wm_view` to scrub / swipe / heat |
 | “Is Sora a world simulator?” / pretty clip | `pixel-wm`, `wm-routes` | `action-following` then `wm_inspect` |
 | Explorable mesh / Gaussian / occupancy | `display-3d`, `wm-routes` | pose or occupancy, then rendered `wm_inspect` |
 | Dreamer / JEPA / “don’t predict pixels” | `latent-wm`, `wm-routes` | task / latent error; decoded RGB is a look |

@@ -1,10 +1,11 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { renderDiagnose, renderDiff, renderDiscover, renderInspect, renderKnowledge, renderSummarize } from './lib/card.js'
+import { renderDiagnose, renderDiff, renderDiscover, renderInspect, renderKnowledge, renderSummarize, renderView } from './lib/card.js'
 import { discover } from './lib/discover.js'
 import { rolloutDiff } from './lib/diff.js'
 import { inspectFrames } from './lib/inspect.js'
+import { writeViewPage } from './lib/view.js'
 import { diagnoseProblem, lookupKnowledge } from './lib/knowledge.js'
 import { summarize } from './lib/summarize.js'
 
@@ -135,6 +136,42 @@ export function apply(ctx) {
         indices: args.indices,
         maxTiles: args.max_tiles ?? 6,
         pair: args.pair,
+      })
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'wm_view',
+    description:
+      'Open a local compare page for a run: side-by-side pred vs GT, swipe overlay, abs-diff heatmap, SSIM timeline, and an action HUD (dx/dy/yaw) when actions.json is present. Writes a self-contained HTML file plus a pred|gt|diff contact sheet. Use after wm_rollout_diff so the user can scrub the worst frames.',
+    parameters: {
+      path: { type: 'string', required: true, description: 'Run directory (pred + gt) or pred path when pair is set' },
+      pair: { type: 'string', description: 'Optional GT strip if path is pred-only' },
+      out: { type: 'string', description: 'HTML output path (default: temp file)' },
+      max_frames: { type: 'number', description: 'Max paired frames to embed (default 64)' },
+    },
+    output: {
+      schema: { type: 'object' },
+      render: (_args, value) => {
+        const blocks = [{ type: 'text', text: renderView(value) }]
+        if (value?.sheet && existsSync(value.sheet)) {
+          blocks.push({
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: 'image/png',
+              data: readFileSync(value.sheet).toString('base64'),
+            },
+          })
+        }
+        return blocks
+      },
+    },
+    async execute(args) {
+      return writeViewPage(args.path, {
+        pair: args.pair,
+        out: args.out,
+        maxFrames: args.max_frames ?? 64,
       })
     },
   }))

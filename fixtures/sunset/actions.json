@@ -1,0 +1,66 @@
+[
+  {
+    "index": 0,
+    "name": "follow-sun",
+    "dx": 1,
+    "dy": 0.15,
+    "yaw": 8,
+    "followed": true
+  },
+  {
+    "index": 1,
+    "name": "follow-sun",
+    "dx": 1,
+    "dy": 0.15,
+    "yaw": 15,
+    "followed": true
+  },
+  {
+    "index": 2,
+    "name": "follow-sun",
+    "dx": 1,
+    "dy": 0.15,
+    "yaw": 22,
+    "followed": true
+  },
+  {
+    "index": 3,
+    "name": "follow-sun",
+    "dx": 1,
+    "dy": 0.15,
+    "yaw": 29,
+    "followed": true
+  },
+  {
+    "index": 4,
+    "name": "follow-sun",
+    "dx": 1,
+    "dy": 0.15,
+    "yaw": 36,
+    "followed": false
+  },
+  {
+    "index": 5,
+    "name": "follow-sun",
+    "dx": 1,
+    "dy": 0.15,
+    "yaw": 43,
+    "followed": false
+  },
+  {
+    "index": 6,
+    "name": "follow-sun",
+    "dx": 1,
+    "dy": 0.15,
+    "yaw": 50,
+    "followed": false
+  },
+  {
+    "index": 7,
+    "name": "follow-sun",
+    "dx": 1,
+    "dy": 0.15,
+    "yaw": 57,
+    "followed": false
+  }
+]

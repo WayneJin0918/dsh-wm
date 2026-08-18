@@ -1,6 +1,6 @@
 ---
 name: wm-run-triage
-description: "Walk a world-model run like a playground level: discover the layout, summarize the log, diff pred vs GT, then look at the worst frames with wm_inspect."
+description: "Walk a world-model run like a playground level: discover the layout, summarize the log, diff pred vs GT, look at the worst frames with wm_inspect, then open wm_view so the user can scrub pred vs GT and the action track."
 whenToUse: "Use when the user points at a run, fixtures/sunset, a train log, or eval output and wants to play through what failed, whether it finished, or what to look at next."
 ---
 
@@ -15,7 +15,8 @@ Do not conclude from a filename or a single log line. Tools first, then a claim.
 3. Call `wm_summarize` on the same path. Report last step, last loss, NaN/early-stop, and the three hypotheses verbatim.
 4. If pred and gt both exist, call `wm_rollout_diff`. Treat late-horizon drop, single-frame flash, and overall blur as different failures.
 5. Call `wm_inspect` on the run (or on the worst-frame paths from the diff). Use `indices` for those frames, or `first,mid,last`. Read the contact sheet, the luma sketch, and the look line before you describe what the pixels show.
-6. Answer with: what the run is, what the numbers say, which hypothesis is cheapest to test next. Do not propose a new architecture in this pass.
+6. Call `wm_view` on the same run so the user can scrub side-by-side / swipe / diff heat and see the action HUD. Point them at the HTML `page` path.
+7. Answer with: what the run is, what the numbers say, which hypothesis is cheapest to test next. Do not propose a new architecture in this pass.
 
 ## Pitfalls
 

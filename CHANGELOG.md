@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 — 2026-08-18
+
+Compare page so a person can watch the strip, not only read a card.
+
+- Tool / CLI: `wm_view` / `node cli.js view` writes a self-contained HTML page (side-by-side, swipe overlay, abs-diff heatmap, SSIM timeline) plus a pred | gt | heat contact sheet.
+- Action track: `actions.json` (or `wm.yaml` `actions:`) draws a HUD arrow for dx / dy / yaw and a followed / dropped chip. Sunset fixture ships a `follow-sun` pan that holds on frames 0–3 and drops on 4–7.
+- `wm_discover` reports the actions file. `wm-run-triage` opens the page after inspect.
+- README gallery: inspect sheet, SSIM bars, pred | GT | heat story, and a local `docs/sunset-view.html` playground.
+
 ## 0.2.0 — 2026-08-17
 
 Broader research toolkit, not only run scoring.

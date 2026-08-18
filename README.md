@@ -12,14 +12,16 @@ Point the agent at a rollout (or just `fixtures/sunset`) and ask: did the second
 
 🌐 **English** | [中文](README.zh.md)
 
-World-model work inside DeepSeek Harness is more fun when the agent can *see* the strip, *name* the lineage, and *measure* the claim. DSH-WM is the profile bundle for that: contact-sheet inspect, three-route knowledge (3D display / pixel video-gen / latent prediction), run scoring, and an RSI loop on skills and `wm.yaml`.
+World-model work inside DeepSeek Harness is more fun when the agent can *see* the strip, *name* the lineage, and *measure* the claim. DSH-WM is the profile bundle for that: contact-sheet inspect, a compare page (side-by-side / swipe / diff heat + action HUD), three-route knowledge (3D display / pixel video-gen / latent prediction), run scoring, and an RSI loop on skills and `wm.yaml`.
 
 ```sh
 dsh plugin --profile wm add github:WayneJin0918/dsh-wm
 dsh --profile wm
 ```
 
-Then try: *Triage `fixtures/sunset`. Look at first, mid, last. Is this late-horizon?*
+Then try: *Triage `fixtures/sunset`. Look at first, mid, last. Is this late-horizon? Open the compare page.*
+
+![sunset inspect — pred over GT, last tile wiped blue](docs/sunset-inspect.png)
 
 DeepSeek’s product mainline can skip world models. Harness is still the research OS — this plugin is the WM lab on top of it.
 
@@ -29,6 +31,7 @@ DeepSeek’s product mainline can skip world models. Harness is still the resear
 <summary>Table of contents</summary>
 
 - [Play it in 30 seconds](#play-it-in-30-seconds)
+- [Watch the wipe](#watch-the-wipe)
 - [Highlights](#highlights)
 - [Three routes](#three-routes)
 - [Who it is for](#who-it-is-for)
@@ -46,12 +49,33 @@ DeepSeek’s product mainline can skip world models. Harness is still the resear
 
 ```sh
 node cli.js inspect fixtures/sunset --indices first,mid,last
+node cli.js view fixtures/sunset
 node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
 node cli.js diagnose "is Sora a world simulator"
 node cli.js knowledge --id wm-routes
 ```
 
-`wm_inspect` prints a luma sketch you can read in a terminal:
+## Watch the wipe
+
+Sunset is an 8-frame toy: pred stays warm through the first half, then the second half is painted cold blue while GT keeps the sun. Orange rail = pred, teal = GT, red = abs-diff / worst SSIM.
+
+![wm_inspect contact sheet — pred over GT, last pred goes cold](docs/sunset-inspect.png)
+
+*first / mid / last. Top row pred, bottom row GT. The last pred tile is the wipe.*
+
+![SSIM over eight frames — teal holds, red is the late drop](docs/sunset-ssim.png)
+
+*`wm_rollout_diff` names frames 4–6. Teal bars still match; red bars are the late-horizon hole.*
+
+![first, mid, last as pred | GT | heat](docs/sunset-story.png)
+
+*Same three beats as columns pred | GT | |pred−GT|. Heat stays black until the sun is gone from pred.*
+
+![full wm_view compare strip](docs/sunset-compare.png)
+
+*The `wm_view` strip you can scrub. Open [docs/sunset-view.html](docs/sunset-view.html) locally for side-by-side, swipe, heat, and the `follow-sun` HUD (followed on 0–3, dropped on 4–7).*
+
+Terminal companion from `wm_inspect`:
 
 ```text
 pred #0  luma=148.7  low contrast, warm / orange
@@ -63,15 +87,14 @@ gt   #7  luma=160.4  low contrast, warm / orange
     ***#############
 ```
 
-`wm_rollout_diff` on the same strip reports a second-half SSIM drop and names frames 4–6 as the worst window. That is the whole game: look, score, then open a card.
-
 ## Highlights
 
 - **Install and play.** Official DSH bundle, pure JavaScript, no `prepare` / `allowBuilds`. Sunset works from `node cli.js` before you even open Harness.
 - **Look at the frames in-repo.** `wm_inspect` samples first / mid / last (or named indices), writes a contact sheet, and returns a luma sketch plus a color/contrast look.
+- **Compare the page yourself.** `wm_view` writes a self-contained HTML page: side-by-side, swipe overlay, abs-diff heatmap, SSIM timeline, and an action HUD when `actions.json` is present.
 - **Name the route first.** 3D display, pixel / video-gen WM, and latent prediction are three exams. `wm-routes` then `display-3d` / `pixel-wm` / `latent-wm`.
-- **A run is a directory.** Optional `wm.yaml` declares pred / gt / log / metrics. No manifest → heuristics. Cannot tell → candidates and warnings, never invented paths.
-- **Measure when you have a run.** `wm_discover` → `wm_summarize` → `wm_rollout_diff` → `wm_inspect` for layout, logs, numbers, and a look.
+- **A run is a directory.** Optional `wm.yaml` declares pred / gt / log / metrics / actions. No manifest → heuristics. Cannot tell → candidates and warnings, never invented paths.
+- **Measure when you have a run.** `wm_discover` → `wm_summarize` → `wm_rollout_diff` → `wm_inspect` → `wm_view` for layout, logs, numbers, a look, and a page you can scrub.
 - **Built-in WM knowledge.** Technique cards for chunk-AR, memory, KV, exposure bias, revisit, ablation, action following, cache eviction, and RSI-in-Harness. `wm_knowledge` / `wm_diagnose` before a new architecture.
 - **RSI on the harness layer.** Skill `wm-rsi` uses DSH trajectory, fork, Creator, and sunset to evolve skills, `wm.yaml`, and eval notes.
 - **Skills that keep the game honest.** Triage, knowledge, RSI, fair ablation, revisit.
@@ -106,6 +129,7 @@ node cli.js diagnose "JEPA latent Dreamer"
 | **Turn a log tail into a next test** | `wm_summarize` — last loss / NaN / early-stop plus three hypotheses |
 | **Put a number on “looks worse”** | `wm_rollout_diff` — mean/min SSIM, curve, worst frames, diagnosis |
 | **Look at those worst frames** | `wm_inspect` — contact sheet, luma sketches, per-tile look |
+| **Scrub pred vs GT and the stick** | `wm_view` — side-by-side / swipe / heat, action arrow, followed / dropped |
 | **Place a paper on the map** | `wm-routes` → `display-3d` / `pixel-wm` / `latent-wm` |
 | **Keep an ablation honest** | `wm-ablation` — paired `(scene, protocol, seed)` and failure rate first |
 | **Talk about coming home** | `wm-revisit` — geometric vs frame-similarity proxy |
@@ -161,14 +185,14 @@ Use Harness RSI to tighten the revisit skill; keep sunset as the gate.
 | Task | Recommended workflow |
 | --- | --- |
 | First five minutes / no GPU | `inspect` sunset → `diff` → `diagnose` a question you care about |
-| A training or eval run looks wrong | `wm-run-triage` → discover → summarize → diff → inspect |
+| A training or eval run looks wrong | `wm-run-triage` → discover → summarize → diff → inspect → view |
 | Which WM route is this paper? | `wm-routes` → `display-3d` / `pixel-wm` / `latent-wm` |
 | “What kind of memory should we use?” | `wm-knowledge` → `chunk-ar` / `memory-types` / `kv-memory` → then measure |
 | Late-horizon melt, train loss fine | `wm_diagnose` → `exposure-bias` → scheduled sampling |
 | Which cache / memory config won? | `wm-ablation` → paired n and failure rate → mean delta |
 | Did the camera come back? | `wm-revisit` → full-strip diff → first/last only if no poses |
 | Improve the *research loop* itself | `wm-rsi` → Creator / trajectory → one skill or `wm.yaml` change → sunset gate |
-| Offline CI / no API key | `node cli.js knowledge`, `diagnose`, `discover`, `diff`, `inspect` |
+| Offline CI / no API key | `node cli.js knowledge`, `diagnose`, `discover`, `diff`, `inspect`, `view` |
 
 ## Toolbox
 
@@ -176,7 +200,7 @@ Three families you can compose in one session:
 
 | Family | Tools | Job |
 | --- | --- | --- |
-| **Measure** | `wm_discover`, `wm_summarize`, `wm_rollout_diff`, `wm_inspect` | Layout, logs, pred vs GT numbers, look at frames |
+| **Measure** | `wm_discover`, `wm_summarize`, `wm_rollout_diff`, `wm_inspect`, `wm_view` | Layout, logs, pred vs GT numbers, look, compare page |
 | **Know** | `wm_knowledge`, `wm_diagnose` | Route + technique cards, symptom → next step |
 | **Iterate** | skills `wm-run-triage`, `wm-knowledge`, `wm-rsi`, `wm-ablation`, `wm-revisit` | Honest eval and harness-layer RSI |
 
@@ -186,10 +210,11 @@ Three families you can compose in one session:
 | `wm_summarize` | “Did training actually finish, and what should I test?” | last loss / NaN / early-stop, metric keys, 3 hypotheses |
 | `wm_rollout_diff` | “Where does pred drift from GT?” | mean/min SSIM, curve, worst 3 frames, diagnosis |
 | `wm_inspect` | “What do first / mid / last / the worst frames look like?” | contact sheet, luma sketch, color/contrast look |
+| `wm_view` | “Let me scrub pred vs GT and see whether the action was followed.” | HTML page + pred / gt / heat sheet |
 | `wm_knowledge` | “Which route / what is chunk-AR / KV / RSI?” | catalog or a full technique card |
 | `wm_diagnose` | “It forgets when we come back — now what?” | card ids + next tool / skill |
 
-Rollout scores are **luminance SSIM + MSE**. `wm_inspect` is the built-in way to look at the strip.
+Rollout scores are **luminance SSIM + MSE**. `wm_inspect` is the built-in way to look at the strip; `wm_view` is the page you scrub.
 
 ### Knowledge cards
 
@@ -208,7 +233,7 @@ node cli.js diagnose "late collapse after the first chunk"
 
 ### Skills
 
-- **wm-run-triage** — walk a run: discover → summarize → diff → inspect, then name the failure
+- **wm-run-triage** — walk a run: discover → summarize → diff → inspect → view, then name the failure
 - **wm-knowledge** — open a route or technique card before designing
 - **wm-rsi** — one claim, one card, one measurement, one skill / `wm.yaml` change, sunset gate
 - **wm-ablation** — paired scene / protocol / seed before any mean
@@ -220,7 +245,7 @@ DeepSeek Harness already gives you append-only trajectories, fork/replay, and Cr
 
 1. Write a falsifiable claim.
 2. Open `wm_knowledge` (`rsi-harness` + the technique, after `wm-routes` if the lineage is unclear).
-3. Measure (`wm_summarize` / `wm_rollout_diff`) and look (`wm_inspect`).
+3. Measure (`wm_summarize` / `wm_rollout_diff`) and look (`wm_inspect` / `wm_view`).
 4. Change **one** skill, `wm.yaml` field, or eval note.
 5. Gate on `fixtures/sunset` (must still report late-horizon drop) and a paired user scene.
 6. Solidify or roll back; keep the session.
@@ -235,16 +260,17 @@ pred: outputs/pred          # frame directory or mp4
 gt: outputs/gt
 log: logs/train.log
 metrics: metrics.json       # any JSON; keys are summarized, not schema-validated
+actions: actions.json       # optional per-frame control track for wm_view
 ```
 
-Without the file, the plugin looks for `pred|preds|recon`, `gt|target|ref`, `train.log` / `logs/*.log`, and `metrics.json` / `*eval*.json`.
+Without the file, the plugin looks for `pred|preds|recon`, `gt|target|ref`, `train.log` / `logs/*.log`, `metrics.json` / `*eval*.json`, and `actions.json`.
 
 ## How it works
 
 ```mermaid
 flowchart LR
   play[Ask or point at a run] --> know[wm_knowledge / wm_diagnose]
-  know --> measure[wm_discover / summarize / diff / inspect]
+  know --> measure[wm_discover / summarize / diff / inspect / view]
   measure --> rsi[wm-rsi on skills and wm.yaml]
   rsi --> gate[sunset fixture plus paired scene]
 ```
@@ -252,7 +278,7 @@ flowchart LR
 Three layers, one session:
 
 1. **Knowledge** — name the route, then open a technique card.
-2. **Measure** — filesystem tools plus `wm_inspect`.
+2. **Measure** — filesystem tools plus `wm_inspect` and `wm_view`.
 3. **RSI** — evolve the research loop and pass the sunset gate.
 
 ## Offline fixture
