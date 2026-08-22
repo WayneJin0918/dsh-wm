@@ -52,6 +52,12 @@ node cli.js diagnose "is Sora a world simulator"
 node cli.js knowledge --id wm-routes
 ```
 
+Add `--json` to `diff` when an evaluation runner needs the structured score instead of the terminal card:
+
+```sh
+node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt --json
+```
+
 `wm_inspect` prints a luma sketch you can read in a terminal:
 
 ```text

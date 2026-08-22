@@ -47,6 +47,12 @@ node cli.js diagnose "Sora 算世界模型吗"
 node cli.js knowledge --id wm-routes
 ```
 
+评测 runner 需要结构化分数而不是终端卡片时，给 `diff` 加上 `--json`：
+
+```sh
+node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt --json
+```
+
 `wm_inspect` 会打出终端里就能读的亮度草图：
 
 ```text

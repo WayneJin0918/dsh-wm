@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- CLI: `node cli.js diff ... --json` emits the structured rollout score for evaluation runners.
+
 ## 0.3.0 — 2026-08-18
 
 Compare page so a person can watch the strip, not only read a card.
