@@ -20,14 +20,14 @@ function usage() {
 Try the sunset playground (no GPU):
   node cli.js inspect fixtures/sunset --indices first,mid,last
   node cli.js view fixtures/sunset
-  node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt
+  node cli.js diff --pred fixtures/sunset/pred --gt fixtures/sunset/gt --json
   node cli.js diagnose "is Sora a world simulator"
   node cli.js knowledge --id wm-routes
 
 Usage:
   node cli.js discover <run-dir>
   node cli.js summarize <run-dir> [--tail 80]
-  node cli.js diff --pred <path> --gt <path> [--max-frames 64]
+  node cli.js diff --pred <path> --gt <path> [--max-frames 64] [--json]
   node cli.js knowledge [query]
   node cli.js knowledge --id wm-routes
   node cli.js diagnose <symptom...>
@@ -65,7 +65,8 @@ if (cmd === 'discover') {
     process.exit(1)
   }
   const maxFrames = Number(flag(rest, '--max-frames', 64))
-  process.stdout.write(`${renderDiff(rolloutDiff(resolve(pred), resolve(gt), { maxFrames }))}\n`)
+  const result = rolloutDiff(resolve(pred), resolve(gt), { maxFrames })
+  process.stdout.write(rest.includes('--json') ? `${JSON.stringify(result)}\n` : `${renderDiff(result)}\n`)
 } else if (cmd === 'knowledge') {
   const id = flag(rest, '--id')
   const query = rest.filter((a) => a !== '--id' && a !== id).join(' ')
